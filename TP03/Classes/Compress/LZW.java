@@ -21,8 +21,7 @@ public class LZW {
         int dictSize = 256; // tamanho do dicionario (tabela acsii)
         Map<String, Integer> dicionario = new HashMap<String, Integer>(); // dicionario com os caracteres e seus codigos
 
-        for (int i = 0; i < dictSize; i++) { // inicializa o dicionario com os caracteres da tabela ascii (n é muito
-                                             // util para arquivo binario)
+        for (int i = 0; i < dictSize; i++) { // inicializa o dicionario com os caracteres da tabela ascii (n é muito util para arquivo binario)
             dicionario.put(String.valueOf((char) i), i);
         }
 
@@ -30,8 +29,7 @@ public class LZW {
         List<Integer> encode = new ArrayList<Integer>();
         for (char character : texto.toCharArray()) { // percorre o texto
             String codigoAux = codigo + character;
-            if (dicionario.containsKey(codigoAux)) { // se o dicionario ja contem o codigo, adiciona o caracter ao
-                                                     // codigo
+            if (dicionario.containsKey(codigoAux)) { // se o dicionario ja contem o codigo, adiciona o caracter ao codigo                                                    
                 codigo = codigoAux;
             } else { // senao, adiciona o codigo no dicionario e adiciona o codigo do caracter atual
                      // na lista de codigos
@@ -62,36 +60,16 @@ public class LZW {
             dicionario.put(i, String.valueOf((char) i));
         }
 
-        String codigo = String.valueOf((char) encodedText.remove(0).intValue()); // pega o primeiro codigo e transforma
-                                                                                 // em caracter
+        String codigo = String.valueOf((char) encodedText.remove(0).intValue()); // pega o primeiro codigo e transforma em caracter
+                                                                                
         StringBuffer decode = new StringBuffer(codigo); // adiciona o caracter no buffer
 
         for (int code : encodedText) { // percorre a lista de codigos
 
-            String entrada = dicionario.containsKey(code) ? dicionario.get(code) : (codigo + codigo.charAt(0)); // se o
-                                                                                                                // codigo
-                                                                                                                // estiver
-                                                                                                                // no
-                                                                                                                // dicionario,
-                                                                                                                // pega
-                                                                                                                // a
-                                                                                                                // palavra
-                                                                                                                // correspondente,
-                                                                                                                // senao,
-                                                                                                                // pega
-                                                                                                                // a
-                                                                                                                // palavra
-                                                                                                                // atual
-                                                                                                                // + o
-                                                                                                                // primeiro
-                                                                                                                // caracter
-                                                                                                                // da
-                                                                                                                // palavra
-                                                                                                                // atual
+            String entrada = dicionario.containsKey(code) ? dicionario.get(code) : (codigo + codigo.charAt(0));  // se o dicionario contem o codigo, pega a palavra correspondente, senao, pega a palavra atual + o primeiro caracter da palavra atual
             decode.append(entrada);
 
-            dicionario.put(dictSize++, codigo + entrada.charAt(0)); // adiciona a codigo atual + o primeiro caracter da
-                                                                    // palavra atual no dicionario
+            dicionario.put(dictSize++, codigo + entrada.charAt(0)); // adiciona a palavra atual + o primeiro caracter da palavra atual no dicionario
 
             codigo = entrada;
         }
@@ -199,8 +177,7 @@ public class LZW {
 
             System.out.println("Tempo de compressão de numero " + (i + 1) + ": " + duration + " ms");
 
-            stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText); // transforma a lista de codigos em um
-                                                                                // arquivo
+            stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText); // transforma a lista de codigos em um arquivo 
 
             filePath = original + "LZWEncode" + (i + 1) + ".db"; // pega o caminho do novo arquivo n a ser comprimido
 

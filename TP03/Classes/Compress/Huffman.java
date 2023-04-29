@@ -120,7 +120,7 @@ public class Huffman { //Huffman é a classe principal e a arvore
 
 
     public Huffman(){
-
+        //construtor vazio
     }
 
     /**
