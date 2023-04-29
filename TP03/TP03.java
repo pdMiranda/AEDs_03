@@ -140,12 +140,12 @@ public class TP03 {
                                     System.out.println("\n**Comprimindo Huffman**");
                                     Huffman huffman = new Huffman();
                                     long timeHuffman = huffman.EncodeFinal(dbFile, vercoes);
-                                    System.out.println("\ntempo de execucao: " + timeHuffman + "ms");
+                                    System.out.println("tempo de execucao: " + timeHuffman + "ms");
 
                                     System.out.println("\n**Comprimindo LZW**");
                                     LZW lzw = new LZW();
                                     long timeLZW = lzw.EncodeFinal(dbFile, vercoes);
-                                    System.out.println("\tempo de execucao: " + timeLZW + "ms");
+                                    System.out.println("tempo de execucao: " + timeLZW + "ms");
 
                                     System.out.print("\n**Arquivos comprimidos com sucesso**");
                                     if(timeHuffman > timeLZW){
@@ -166,14 +166,14 @@ public class TP03 {
                                         System.out.println("\nDescomprimindo Huffman");
                                         Huffman huffman = new Huffman();
                                         long timeHuffman =  huffman.DecodeFinal(dbFile, vercoes);
-                                        System.out.println("\ntempo de execucao: " + timeHuffman + "ms");
+                                        System.out.println("tempo de execucao: " + timeHuffman + "ms");
 
                                         System.out.println("\nDescomprimindo LZW");
                                         LZW lzw = new LZW();
                                         long timeLZW = lzw.DecodeFinal(dbFile, vercoes);
-                                        System.out.println("\ntempo de execucao: " + timeLZW + "ms");
+                                        System.out.println("tempo de execucao: " + timeLZW + "ms");
 
-                                        System.out.print("\n**Arquivos descomprimidos com sucesso**");
+                                        System.out.println("\n**Arquivos descomprimidos com sucesso**");
                                         if(timeHuffman > timeLZW){
                                             System.out.println("**LZW foi mais rapido**");
                                         }else if (timeLZW > timeHuffman){

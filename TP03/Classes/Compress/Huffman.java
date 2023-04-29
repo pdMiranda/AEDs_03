@@ -282,10 +282,9 @@ public class Huffman { //Huffman é a classe principal e a arvore
 
     public long EncodeFinal(String filePath , int n) throws IOException {
 
-        long desp = 0;
-        long aux1 = 0; 
-        long aux2 = 0;
-        long startTimeTotal = System.currentTimeMillis();
+        long startTime = 0;
+        long endTime = 0;
+        long duration = 0;
 
         String original = filePath.substring(0, filePath.length() - 3);
 
@@ -299,24 +298,17 @@ public class Huffman { //Huffman é a classe principal e a arvore
             byte[] data = getBytesFromFile(filePath);
             Huffman huffman = new Huffman(data);
 
-            long startTime = System.currentTimeMillis();
+            startTime = System.currentTimeMillis();
 
             byte[] encodedBytes = huffman.compress();
 
-            long endTime = System.currentTimeMillis();
-            long duration = (endTime - startTime);
+            endTime = System.currentTimeMillis();
+            duration += (endTime - startTime);
 
             BytestoFile(original + "HuffmanEncode" + (i + 1) + ".db", encodedBytes);
 
             System.out.println("Tempo de compressão de numero " + (i + 1) + ": " + duration + " ms");
             
-            aux1 = System.currentTimeMillis();
-            byte[] decodedBytes = huffman.decompress(encodedBytes);
-            BytestoFile(original + "HuffmanDecode" + (i + 1) + ".db", decodedBytes);
-            aux2 = System.currentTimeMillis();
-
-            desp += aux2 - aux1;
-
             filePath = original + "HuffmanEncode" + (i + 1) + ".db";
 
             System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + (encodedBytes).length + " bytes");
@@ -324,48 +316,37 @@ public class Huffman { //Huffman é a classe principal e a arvore
             
         }
 
-        long endTimeTotal = System.currentTimeMillis();
-        long durationTotal = (endTimeTotal - startTimeTotal);
-
-        for(int i = 0; i < n; i++){
-            File delete = new File(original + "HuffmanDecode" + (i + 1) + ".db");
-            delete.delete();
-        }
-
-        return durationTotal - desp;
+        return duration;
 
     }
 
     public long DecodeFinal(String filePath , int n) throws IOException {
 
-        long startTimeTotal = System.currentTimeMillis();
-
-        long desperdicio = 0;
-        long aux1 = 0;
-        long aux2 = 0;
+        long startTime = 0;
+        long endTime = 0;
+        long duration = 0;
 
         String original = filePath.substring(0, filePath.length() - 3);
         byte[] originalFile = getBytesFromFile(filePath);
         long tamanhoOriginal = (originalFile).length;
 
+        //String primeira = original + "HuffmanEncode" + n + ".db";
+
         System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
         for(int i = 0; i < n; i++){
-            aux1 = System.currentTimeMillis();
             byte[] data = getBytesFromFile(filePath);
             Huffman huffman = new Huffman(data);
 
             byte[] encodedBytes = huffman.compress();
             BytestoFile(original + "HuffmanEncode" + (n - i) + ".db", encodedBytes);
-            aux2 = System.currentTimeMillis();
 
-            desperdicio = desperdicio + (aux2 - aux1);
 
-            long startTime = System.currentTimeMillis();
+            startTime = System.currentTimeMillis();
             
             byte[] decodedBytes = huffman.decompress(encodedBytes);
 
-            long endTime = System.currentTimeMillis();
-            long duration = (endTime - startTime);
+            endTime = System.currentTimeMillis();
+            duration += (endTime - startTime);
 
             BytestoFile(original + "HuffmanDecode" + (n - i)  + ".db", decodedBytes);
             System.out.println("Tempo de descompressão de numero " + (n - i)  + ": " + duration + " ");
@@ -377,10 +358,7 @@ public class Huffman { //Huffman é a classe principal e a arvore
             System.out.println("Taxa de descompressão de numero " + (n - i)  + ": " + (float) (decodedBytes).length / (float)data.length* 100 + "%\n");
         }
 
-        long endTimeTotal = System.currentTimeMillis();
-        long durationTotal = (endTimeTotal - startTimeTotal);
-
-        return durationTotal - desperdicio;
+        return duration;
 
     }
 

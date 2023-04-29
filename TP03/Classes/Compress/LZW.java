@@ -141,11 +141,9 @@ public class LZW{
 
     public long EncodeFinal(String filePath , int n){
         
-        long desp = 0;
-        long aux1 = 0; 
-        long aux2 = 0;
-
-        long startTimeTotal = System.currentTimeMillis();
+        long startTime = 0;
+        long endTime = 0;
+        long duration = 0;
 
         String original = filePath.substring(0, filePath.length() - 3);
         
@@ -157,21 +155,21 @@ public class LZW{
            
             String data = arqToString(filePath);
 
-            Long startTime = System.currentTimeMillis();
+            startTime = System.currentTimeMillis();
 
             List<Integer> encodedText = LZW.encode(data);
 
-            Long endTime = System.currentTimeMillis();
-            Long duration = (endTime - startTime);
+            endTime = System.currentTimeMillis();
+            duration += (endTime - startTime);
+
             System.out.println("Tempo de compressão de numero " + (i + 1) + ": " + duration + " ms");
 
             stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText);
 
-            aux1 = System.currentTimeMillis();
-            String decodedText = LZW.decode(encodedText);
-            stringToArq(original + "LZWDecode" + (i + 1) + ".db",decodedText);
-            aux2 = System.currentTimeMillis();
-            desp += aux2 - aux1;
+            
+            //String decodedText = LZW.decode(encodedText);
+            //stringToArq(original + "LZWDecode" + (i + 1) + ".db",decodedText);
+            
 
             filePath = original + "LZWEncode" + (i + 1) + ".db";
 
@@ -180,24 +178,13 @@ public class LZW{
             
         }
 
-        long endTimeTotal = System.currentTimeMillis();
-        long durationTotal = (endTimeTotal - startTimeTotal);
-
-        for(int i = 0; i < n; i++){
-            File delete = new File(original + "LZWDecode" + (i + 1) + ".db");
-            delete.delete();
-        }
-
-        return durationTotal - desp;
+        return duration;
     }
 
     public long DecodeFinal(String filePath , int n){
-        long desp = 0;
-        long aux1 = 0;
-        long aux2 = 0;
-
-
-        long startTimeTotal = System.currentTimeMillis();
+        long startTime = 0;
+        long endTime = 0;
+        long duration = 0;
 
         String original = filePath.substring(0, filePath.length() - 3);
 
@@ -206,20 +193,17 @@ public class LZW{
         System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
 
         for(int i = 0; i < n; i++){
-            aux1 = System.currentTimeMillis();
             String data = arqToString(filePath);
             List<Integer> encodedText = LZW.encode(data);
 
             stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText);
 
-            aux2 = System.currentTimeMillis();
-            desp += aux2 - aux1;
-            long startTime = System.currentTimeMillis();
+            startTime = System.currentTimeMillis();
             
             String decodedText = LZW.decode(encodedText);
-
-            long endTime = System.currentTimeMillis();
-            long duration = (endTime - startTime);
+            
+            endTime = System.currentTimeMillis();
+            duration += (endTime - startTime);
             System.out.println("Tempo de descompressão de numero " + (i + 1) + ": " + duration + " ");
 
             stringToArq(original + "LZWDecode" + (i + 1) + ".db",decodedText);
@@ -231,10 +215,8 @@ public class LZW{
             
         }
 
-        long endTimeTotal = System.currentTimeMillis();
-        long durationTotal = (endTimeTotal - startTimeTotal);
         
-        return durationTotal - desp;
+        return duration;
 
     }
 
