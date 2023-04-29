@@ -291,6 +291,7 @@ public class Huffman { //Huffman é a classe principal e a arvore
         long startTime = 0;  //variaveis para calcular o tempo de compressao
         long endTime = 0;
         long duration = 0;
+        long durationTotal = 0;
 
         String original = filePath.substring(0, filePath.length() - 3);  //pega o nome do arquivo original, sem o .db
 
@@ -309,7 +310,8 @@ public class Huffman { //Huffman é a classe principal e a arvore
             byte[] encodedBytes = huffman.compress();  //comprime o arquivo
 
             endTime = System.currentTimeMillis();  //termina de contar o tempo de compressao
-            duration += (endTime - startTime);  //soma o tempo de compressao de cada arquivo
+            duration = (endTime - startTime);  //soma o tempo de compressao de cada arquivo
+            durationTotal += duration;  //soma o tempo de compressao de todos os arquivos
 
             BytestoFile(original + "HuffmanEncode" + (i + 1) + ".db", encodedBytes);
 
@@ -322,7 +324,7 @@ public class Huffman { //Huffman é a classe principal e a arvore
             
         }
 
-        return duration;
+        return durationTotal;
 
     }
 
@@ -337,6 +339,7 @@ public class Huffman { //Huffman é a classe principal e a arvore
         long startTime = 0;  //variaveis para calcular o tempo de descompressao
         long endTime = 0;
         long duration = 0;
+        long durationTotal = 0;
 
         String original = filePath.substring(0, filePath.length() - 3);  //pega o nome do arquivo original, sem o .db
         byte[] originalFile = getBytesFromFile(filePath);  //pega o arquivo original em bytes
@@ -351,13 +354,13 @@ public class Huffman { //Huffman é a classe principal e a arvore
             byte[] encodedBytes = huffman.compress();  
             BytestoFile(original + "HuffmanEncode" + (n - i) + ".db", encodedBytes);
 
-
             startTime = System.currentTimeMillis();  //comeca a contar o tempo de descompressao
             
             byte[] decodedBytes = huffman.decompress(encodedBytes);  //descomprime o arquivo 
 
             endTime = System.currentTimeMillis();  //termina de contar o tempo de descompressao
-            duration += (endTime - startTime);  //soma o tempo de descompressao de cada arquivo
+            duration = (endTime - startTime);  //soma o tempo de descompressao de cada arquivo
+            durationTotal += duration;  //soma o tempo de descompressao de todos os arquivos
 
             BytestoFile(original + "HuffmanDecode" + (n - i)  + ".db", decodedBytes);  //cria o arquivo n descomprimido
             System.out.println("Tempo de descompressão de numero " + (n - i)  + ": " + duration + " ");
@@ -369,7 +372,7 @@ public class Huffman { //Huffman é a classe principal e a arvore
             System.out.println("Taxa de descompressão de numero " + (n - i)  + ": " + (float) (decodedBytes).length / (float)data.length* 100 + "%\n");
         }
 
-        return duration;
+        return durationTotal;
 
     }
 
