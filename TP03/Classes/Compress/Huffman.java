@@ -280,36 +280,42 @@ public class Huffman { //Huffman é a classe principal e a arvore
         
     }
 
+    /**
+     * @param filePath caminho do arquivo 
+     * @param n numero de vezes que o arquivo sera comprimido
+     * @return long duration - tempo de compressao de todos os arquivos
+     * @throws IOException
+     */
     public long EncodeFinal(String filePath , int n) throws IOException {
 
-        long startTime = 0;
+        long startTime = 0;  //variaveis para calcular o tempo de compressao
         long endTime = 0;
         long duration = 0;
 
-        String original = filePath.substring(0, filePath.length() - 3);
+        String original = filePath.substring(0, filePath.length() - 3);  //pega o nome do arquivo original, sem o .db
 
-        byte[] originalFile = getBytesFromFile(filePath);
-        long tamanhoOriginal = (originalFile).length;
+        byte[] originalFile = getBytesFromFile(filePath);  //pega o arquivo original em bytes
+        long tamanhoOriginal = (originalFile).length;  //pega o tamanho do arquivo original
         System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
 
-        for(int i = 0; i < n; i++){
+        for(int i = 0; i < n; i++){  //comprime o arquivo n vezes
             
 
-            byte[] data = getBytesFromFile(filePath);
-            Huffman huffman = new Huffman(data);
+            byte[] data = getBytesFromFile(filePath);  //pega o arquivo n em bytes
+            Huffman huffman = new Huffman(data); 
 
-            startTime = System.currentTimeMillis();
+            startTime = System.currentTimeMillis(); //comeca a contar o tempo de compressao
 
-            byte[] encodedBytes = huffman.compress();
+            byte[] encodedBytes = huffman.compress();  //comprime o arquivo
 
-            endTime = System.currentTimeMillis();
-            duration += (endTime - startTime);
+            endTime = System.currentTimeMillis();  //termina de contar o tempo de compressao
+            duration += (endTime - startTime);  //soma o tempo de compressao de cada arquivo
 
             BytestoFile(original + "HuffmanEncode" + (i + 1) + ".db", encodedBytes);
 
             System.out.println("Tempo de compressão de numero " + (i + 1) + ": " + duration + " ms");
             
-            filePath = original + "HuffmanEncode" + (i + 1) + ".db";
+            filePath = original + "HuffmanEncode" + (i + 1) + ".db";  //muda o caminho do arquivo para o comprimir o novo arquivo
 
             System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + (encodedBytes).length + " bytes");
             System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (encodedBytes).length / tamanhoOriginal * 100 + "%\n");
@@ -320,39 +326,44 @@ public class Huffman { //Huffman é a classe principal e a arvore
 
     }
 
+    /**
+     * @param filePath  caminho do arquivo
+     * @param n  numero de vezes que o arquivo sera descomprimido
+     * @return  long duration - tempo de descompressao de todos os arquivos
+     * @throws IOException
+     */
     public long DecodeFinal(String filePath , int n) throws IOException {
 
-        long startTime = 0;
+        long startTime = 0;  //variaveis para calcular o tempo de descompressao
         long endTime = 0;
         long duration = 0;
 
-        String original = filePath.substring(0, filePath.length() - 3);
-        byte[] originalFile = getBytesFromFile(filePath);
-        long tamanhoOriginal = (originalFile).length;
-
-        //String primeira = original + "HuffmanEncode" + n + ".db";
+        String original = filePath.substring(0, filePath.length() - 3);  //pega o nome do arquivo original, sem o .db
+        byte[] originalFile = getBytesFromFile(filePath);  //pega o arquivo original em bytes
+        long tamanhoOriginal = (originalFile).length;  //pega o tamanho do arquivo original
 
         System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
-        for(int i = 0; i < n; i++){
-            byte[] data = getBytesFromFile(filePath);
-            Huffman huffman = new Huffman(data);
 
-            byte[] encodedBytes = huffman.compress();
+        for(int i = 0; i < n; i++){  //descomprime o arquivo n vezes
+            byte[] data = getBytesFromFile(filePath);  //pega o arquivo n em bytes
+            Huffman huffman = new Huffman(data);  
+
+            byte[] encodedBytes = huffman.compress();  
             BytestoFile(original + "HuffmanEncode" + (n - i) + ".db", encodedBytes);
 
 
-            startTime = System.currentTimeMillis();
+            startTime = System.currentTimeMillis();  //comeca a contar o tempo de descompressao
             
-            byte[] decodedBytes = huffman.decompress(encodedBytes);
+            byte[] decodedBytes = huffman.decompress(encodedBytes);  //descomprime o arquivo 
 
-            endTime = System.currentTimeMillis();
-            duration += (endTime - startTime);
+            endTime = System.currentTimeMillis();  //termina de contar o tempo de descompressao
+            duration += (endTime - startTime);  //soma o tempo de descompressao de cada arquivo
 
-            BytestoFile(original + "HuffmanDecode" + (n - i)  + ".db", decodedBytes);
+            BytestoFile(original + "HuffmanDecode" + (n - i)  + ".db", decodedBytes);  //cria o arquivo n descomprimido
             System.out.println("Tempo de descompressão de numero " + (n - i)  + ": " + duration + " ");
 
 
-            filePath = original + "HuffmanEncode" + (n - i )  + ".db";
+            filePath = original + "HuffmanEncode" + (n - i )  + ".db";  //muda o caminho do arquivo para o descomprimir o novo arquivo
 
             System.out.println("Tamanho do arquivo descomprimido de numero " + (n - i)  + ": " + (decodedBytes).length + " bytes");
             System.out.println("Taxa de descompressão de numero " + (n - i)  + ": " + (float) (decodedBytes).length / (float)data.length* 100 + "%\n");
@@ -362,15 +373,20 @@ public class Huffman { //Huffman é a classe principal e a arvore
 
     }
 
+    /**
+     * @param filePath  caminho do arquivo
+     * @param n  numero arquivos que serao deletados
+     * @throws IOException
+     */
     public void DeleteAllFiles(String filePath , int n) throws IOException {
 
-        String original = filePath.substring(0, filePath.length() - 3);
-        for(int i = 0; i < n; i++){
+        String original = filePath.substring(0, filePath.length() - 3);  //pega o nome do arquivo original, sem o .db
+        for(int i = 0; i < n; i++){  //deleta todos os arquivos comprimidos criados
             File delete = new File(original + "HuffmanEncode" + (i + 1) + ".db");
             delete.delete();
         }
 
-        for(int i = 0; i < n; i++){
+        for(int i = 0; i < n; i++){  //deleta todos os arquivos descomprimidos criados
             File delete = new File(original + "HuffmanDecode" + (i + 1) + ".db");
             delete.delete();
         }

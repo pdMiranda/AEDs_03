@@ -139,39 +139,39 @@ public class LZW{
     }
 
 
+    /**
+     * @param filePath  Caminho do arquivo
+     * @param n  Numero de vezes que o arquivo será codificado
+     * @return long - Tempo de execução
+     */
     public long EncodeFinal(String filePath , int n){
         
-        long startTime = 0;
+        long startTime = 0;  //variaveis para calcular o tempo de execucao  
         long endTime = 0;
         long duration = 0;
 
-        String original = filePath.substring(0, filePath.length() - 3);
+        String original = filePath.substring(0, filePath.length() - 3);  //pega o nome do arquivo sem a extensao .db
         
-        String originalFile = arqToString(filePath);
-        long tamanhoOriginal = (originalFile).length();
-        System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
+        String originalFile = arqToString(filePath);  //transforma o arquivo em uma string
+        long tamanhoOriginal = (originalFile).length();  //pega o tamanho do arquivo original
+        System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");  
 
-        for(int i = 0; i < n; i++){
+        for(int i = 0; i < n; i++){   //comprime o arquivo n vezes
            
-            String data = arqToString(filePath);
+            String data = arqToString(filePath);  //transforma o arquivo em uma string
 
-            startTime = System.currentTimeMillis();
+            startTime = System.currentTimeMillis();  //pega o tempo de inicio da compressao
 
-            List<Integer> encodedText = LZW.encode(data);
+            List<Integer> encodedText = LZW.encode(data);  //comprime a string
 
-            endTime = System.currentTimeMillis();
-            duration += (endTime - startTime);
+            endTime = System.currentTimeMillis();  //pega o tempo de fim da compressao
+            duration += (endTime - startTime);  //calcula o tempo de compressao
 
             System.out.println("Tempo de compressão de numero " + (i + 1) + ": " + duration + " ms");
 
-            stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText);
-
+            stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText);  //transforma a lista de codigos em um arquivo
             
-            //String decodedText = LZW.decode(encodedText);
-            //stringToArq(original + "LZWDecode" + (i + 1) + ".db",decodedText);
-            
-
-            filePath = original + "LZWEncode" + (i + 1) + ".db";
+            filePath = original + "LZWEncode" + (i + 1) + ".db";  //pega o caminho do novo arquivo n a ser comprimido
 
             System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + encodedText.size() + " bytes");
             System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (encodedText).size() / tamanhoOriginal * 100 + "%\n");
@@ -181,15 +181,21 @@ public class LZW{
         return duration;
     }
 
+    /**
+     * @param filePath  Caminho do arquivo
+     * @param n  Numero de vezes que o arquivo será descomprimido
+     * @return  long - Tempo de execução
+     */
     public long DecodeFinal(String filePath , int n){
-        long startTime = 0;
+
+        long startTime = 0;  //variaveis para calcular o tempo de execucao
         long endTime = 0;
         long duration = 0;
 
-        String original = filePath.substring(0, filePath.length() - 3);
+        String original = filePath.substring(0, filePath.length() - 3);  //pega o nome do arquivo sem a extensao .db
 
-        String originalFile = arqToString(filePath);
-        long tamanhoOriginal = (originalFile).length();
+        String originalFile = arqToString(filePath);  //transforma o arquivo em uma string
+        long tamanhoOriginal = (originalFile).length();  //pega o tamanho do arquivo original
         System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
 
         for(int i = 0; i < n; i++){
@@ -198,17 +204,17 @@ public class LZW{
 
             stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText);
 
-            startTime = System.currentTimeMillis();
+            startTime = System.currentTimeMillis();  //pega o tempo de inicio da descompressao
             
-            String decodedText = LZW.decode(encodedText);
+            String decodedText = LZW.decode(encodedText);  //descomprime a string
             
-            endTime = System.currentTimeMillis();
-            duration += (endTime - startTime);
+            endTime = System.currentTimeMillis();  //pega o tempo de fim da descompressao
+            duration += (endTime - startTime);  //calcula o tempo de descompressao
             System.out.println("Tempo de descompressão de numero " + (i + 1) + ": " + duration + " ");
 
-            stringToArq(original + "LZWDecode" + (i + 1) + ".db",decodedText);
+            stringToArq(original + "LZWDecode" + (i + 1) + ".db",decodedText);  //transforma a string descomprimida em um arquivo
 
-            filePath = original + "LZWEncode" + (i + 1) + ".db";
+            filePath = original + "LZWEncode" + (i + 1) + ".db";  //pega o caminho do novo arquivo n a ser descomprimido
 
             System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + decodedText.length()+ " bytes");
             System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (decodedText).length() / data.length() * 100 + "%\n");
@@ -220,15 +226,19 @@ public class LZW{
 
     }
 
+    /**
+     * @param filePath  Caminho do arquivo
+     * @param n  Numero de arquivos a serem deletados
+     */
     public void DeleteAllFiles(String filePath , int n){
         String original = filePath.substring(0, filePath.length() - 3);
 
-        for(int i = 0; i < n; i++){
+        for(int i = 0; i < n; i++){  //deleta os arquivos comprimidos
             File delete = new File(original + "LZWEncode" + (i + 1) + ".db");
             delete.delete();
         }
 
-        for(int i = 0; i < n; i++){
+        for(int i = 0; i < n; i++){  //deleta os arquivos descomprimidos
             File delete = new File(original + "LZWDecode" + (i + 1) + ".db");
             delete.delete();
         }
