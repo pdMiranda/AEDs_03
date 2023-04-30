@@ -3,6 +3,9 @@ package TP03.Classes.Compress;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +79,70 @@ public class LZW {
         return decode.toString();
     }
 
+    public static byte[] encode(byte[] bytes) {
+
+        int dictSize = 256;
+        Map<String, Integer> dicionario = new HashMap<String, Integer>();
+    
+        for (int i = 0; i < dictSize; i++) {
+            dicionario.put(String.valueOf((char) i), i);
+        }
+    
+        String codigo = "";
+        List<Integer> encode = new ArrayList<Integer>();
+        for (byte b : bytes) {
+            char character = (char) (b & 0xFF);
+            String codigoAux = codigo + character;
+            if (dicionario.containsKey(codigoAux)) {
+                codigo = codigoAux;
+            } else {
+                encode.add(dicionario.get(codigo));
+                dicionario.put(codigoAux, dictSize++);
+                codigo = String.valueOf(character);
+            }
+        }
+        if (!codigo.isEmpty()) {
+            encode.add(dicionario.get(codigo));
+        }
+    
+        byte[] encodedBytes = new byte[encode.size()];
+        for (int i = 0; i < encode.size(); i++) {
+            encodedBytes[i] = (byte) (int) encode.get(i);
+        }
+    
+        return encodedBytes;
+    }
+    
+    public static byte[] decode(byte[] encodedBytes) {
+    
+        int dictSize = 256;
+        Map<Integer, String> dicionario = new HashMap<Integer, String>();
+    
+        for (int i = 0; i < dictSize; i++) {
+            dicionario.put(i, String.valueOf((char) i));
+        }
+    
+        List<Integer> encodedText = new ArrayList<Integer>();
+        for (byte b : encodedBytes) {
+            encodedText.add((int) b & 0xFF);
+        }
+    
+        String codigo = String.valueOf((char) encodedText.remove(0).intValue());
+        StringBuffer decode = new StringBuffer(codigo);
+    
+        for (int code : encodedText) {
+    
+            String entrada = dicionario.containsKey(code) ? dicionario.get(code) : (codigo + codigo.charAt(0));
+            decode.append(entrada);
+    
+            dicionario.put(dictSize++, codigo + entrada.charAt(0));
+    
+            codigo = entrada;
+        }
+        return decode.toString().getBytes();
+    }
+    
+
     /**
      * Transforma um arquivo em uma string
      * 
@@ -143,12 +210,42 @@ public class LZW {
         return 0;
     }
 
+    public static byte[] getBytesFromFile(String filePath) throws IOException {  //converte o arquivo para array de bytes (isso que resolve o problema de aumentar o arquivo)
+        File file = new File(filePath);
+        byte[] buffer = new byte[(int) file.length()];
+        
+        try (InputStream input = new FileInputStream(file)) {
+            int bytesRead = input.read(buffer);
+            if (bytesRead != buffer.length) {
+                throw new IOException("Could not read entire file.");
+            }
+        }
+        
+        return buffer;
+    }
+
     /**
-     * @param filePath Caminho do arquivo
-     * @param n        Numero de vezes que o arquivo será codificado
-     * @return long - Tempo de execução
+     * Cria o arquivo a partir do array de bytes
+     * @param filePath String
+     * @param buffer byte[]
+     * @throws IOException 
      */
-    public long EncodeFinal(String filePath, int n) {
+    public static void BytestoFile(String filePath, byte[] buffer) throws IOException {  //converte o array de bytes para arquivo (criar o arquivo)
+        File file = new File(filePath);
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            outputStream.write(buffer);
+        }
+        
+    }
+
+    /**
+     * Comprime o arquivo
+     * @param filePath String
+     * @param n int
+     * @return long
+     * @throws IOException 
+     */
+    public long EncodeFinal(String filePath, int n) throws IOException {
 
         long startTime = 0; // variaveis para calcular o tempo de execucao
         long endTime = 0;
@@ -158,17 +255,16 @@ public class LZW {
 
         String original = filePath.substring(0, filePath.length() - 3); // pega o nome do arquivo sem a extensao .db
 
-        String originalFile = arqToString(filePath); // transforma o arquivo em uma string
-        long tamanhoOriginal = (originalFile).length(); // pega o tamanho do arquivo original
+        byte[] originalFile = getBytesFromFile(filePath); // transforma o arquivo em uma string
+        long tamanhoOriginal = (originalFile).length; // pega o tamanho do arquivo original
         System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
 
         for (int i = 0; i < n; i++) { // comprime o arquivo n vezes
 
-            String data = arqToString(filePath); // transforma o arquivo em uma string
+            byte[] data = getBytesFromFile(filePath); // transforma o arquivo em uma string
 
             startTime = System.currentTimeMillis(); // pega o tempo de inicio da compressao
-
-            List<Integer> encodedText = LZW.encode(data); // comprime a string
+            byte[] encodedText = LZW.encode(data); // comprime a string
 
             endTime = System.currentTimeMillis(); // pega o tempo de fim da compressao
             duration = (endTime - startTime); // calcula o tempo de compressao
@@ -177,26 +273,27 @@ public class LZW {
 
             System.out.println("Tempo de compressão de numero " + (i + 1) + ": " + duration + " ms");
 
-            stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText); // transforma a lista de codigos em um arquivo 
+            BytestoFile(original + "LZWEncode" + (i + 1) + ".db", encodedText); // transforma a lista de codigos em um arquivo 
 
             filePath = original + "LZWEncode" + (i + 1) + ".db"; // pega o caminho do novo arquivo n a ser comprimido
 
-            System.out.println(
-                    "Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + encodedText.size() + " bytes");
-            System.out.println("Taxa de compressão de numero " + (i + 1) + ": "
-                    + (float) (encodedText).size() / tamanhoOriginal * 100 + "%\n");
+            System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + encodedText.length + " bytes");
+            System.out.println("Taxa de compressão de numero " + (i + 1) + ": "+ (float) (encodedText).length / tamanhoOriginal * 100 + "%\n");
 
         }
 
         return durationTotal;
     }
 
+
     /**
-     * @param filePath  Caminho do arquivo
-     * @param n  Numero de vezes que o arquivo será descomprimido
-     * @return  long - Tempo de execução
+     * Descomprime o arquivo
+     * @param filePath String
+     * @param n int
+     * @return long
+     * @throws IOException 
      */
-    public long DecodeFinal(String filePath , int n){
+    public long DecodeFinal(String filePath , int n) throws IOException{
 
         long startTime = 0;  //variaveis para calcular o tempo de execucao
         long endTime = 0;
@@ -206,19 +303,19 @@ public class LZW {
 
         String original = filePath.substring(0, filePath.length() - 3);  //pega o nome do arquivo sem a extensao .db
 
-        String originalFile = arqToString(filePath);  //transforma o arquivo em uma string
-        long tamanhoOriginal = (originalFile).length();  //pega o tamanho do arquivo original
+        byte[] originalFile = getBytesFromFile(filePath);  //transforma o arquivo em uma string
+        long tamanhoOriginal = (originalFile).length;  //pega o tamanho do arquivo original
         System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
 
         for(int i = 0; i < n; i++){
-            String data = arqToString(filePath);
-            List<Integer> encodedText = LZW.encode(data);
+            byte[] data = getBytesFromFile(filePath);
+            byte[] encodedText = LZW.encode(data);
 
-            stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText);
+            BytestoFile(original + "LZWEncode" + (i + 1) + ".db", encodedText);
 
             startTime = System.currentTimeMillis();  //pega o tempo de inicio da descompressao
             
-            String decodedText = LZW.decode(encodedText);  //descomprime a string
+            byte[] decodedText = LZW.decode(encodedText);  //descomprime a string
             
             endTime = System.currentTimeMillis();  //pega o tempo de fim da descompressao
             duration = (endTime - startTime);  //calcula o tempo de descompressao
@@ -226,12 +323,12 @@ public class LZW {
 
             System.out.println("Tempo de descompressão de numero " + (i + 1) + ": " + duration + " ");
 
-            stringToArq(original + "LZWDecode" + (i + 1) + ".db",decodedText);  //transforma a string descomprimida em um arquivo
+            BytestoFile(original + "LZWDecode" + (i + 1) + ".db",decodedText);  //transforma a string descomprimida em um arquivo
 
             filePath = original + "LZWEncode" + (i + 1) + ".db";  //pega o caminho do novo arquivo n a ser descomprimido
 
-            System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + decodedText.length()+ " bytes");
-            System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (decodedText).length() / data.length() * 100 + "%\n");
+            System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + decodedText.length+ " bytes");
+            System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (decodedText).length / data.length * 100 + "%\n");
             
         }
 
