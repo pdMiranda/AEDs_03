@@ -122,8 +122,6 @@ public class TP03 {
                         do {
                             opc2 = subMenu();
 
-
-
                             switch (opc2) {
                          
 

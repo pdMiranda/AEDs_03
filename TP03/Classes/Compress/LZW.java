@@ -142,7 +142,6 @@ public class LZW {
         return decode.toString().getBytes();
     }
     
-
     /**
      * Transforma um arquivo em uma string
      * 
@@ -186,6 +185,62 @@ public class LZW {
             System.out.println("Error: " + e.getMessage());
         }
         return 0;
+    }
+
+    public static List<Integer> arqToList(String io) {
+        try {
+            FileInputStream inputFile = new FileInputStream(io);
+            List<Integer> texto = new ArrayList<Integer>();
+            int byteRead;
+            while ((byteRead = inputFile.read()) != -1) {
+                texto.add(byteRead);
+            }
+            inputFile.close();
+            return texto;
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static List<Integer> stringToList(String texto){
+        List<Integer> lista = new ArrayList<Integer>();
+        for (int i = 0; i < texto.length(); i++) {
+            lista.add((int) texto.charAt(i));
+        }
+        return lista;
+    }
+
+    public static byte[] bytesFromList(List<Integer> texto){
+        byte[] bytes = new byte[texto.size()];
+        for (int i = 0; i < texto.size(); i++) {
+            bytes[i] = texto.get(i).byteValue();
+        }
+        return bytes;
+    }
+
+    public static List<Integer> listFromBytes(byte[] bytes){
+        List<Integer> lista = new ArrayList<Integer>();
+        for (int i = 0; i < bytes.length; i++) {
+            lista.add((int) bytes[i]);
+        }
+        return lista;
+    }
+
+    public static byte[] stringToByte(String texto){
+        byte[] bytes = new byte[texto.length()];
+        for (int i = 0; i < texto.length(); i++) {
+            bytes[i] = (byte) texto.charAt(i);
+        }
+        return bytes;
+    }
+
+    public static String byteToString(byte[] bytes){
+        String texto = "";
+        for (int i = 0; i < bytes.length; i++) {
+            texto += (char) bytes[i];
+        }
+        return texto;
     }
 
     /**
@@ -293,49 +348,42 @@ public class LZW {
      * @return long
      * @throws IOException 
      */
-    public long DecodeFinal(String filePath , int n) throws IOException{
+    public long DecodeFinal(String filePath , int n){
 
-        long startTime = 0;  //variaveis para calcular o tempo de execucao
+        long startTime = 0;  //variaveis para calcular o tempo de descompressao
         long endTime = 0;
         long duration = 0;
-
         long durationTotal = 0;
 
-        String original = filePath.substring(0, filePath.length() - 3);  //pega o nome do arquivo sem a extensao .db
+        String original = filePath.substring(0, filePath.length() - 3);
 
-        byte[] originalFile = getBytesFromFile(filePath);  //transforma o arquivo em uma string
-        long tamanhoOriginal = (originalFile).length;  //pega o tamanho do arquivo original
+        String originalFile = arqToString(filePath);
+        long tamanhoOriginal = (originalFile).length();
         System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
 
         for(int i = 0; i < n; i++){
-            byte[] data = getBytesFromFile(filePath);
-            byte[] encodedText = LZW.encode(data);
+            String data = arqToString(filePath);
 
-            BytestoFile(original + "LZWEncode" + (i + 1) + ".db", encodedText);
+            List<Integer> encodedText = LZW.encode(data);
+            stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText);
 
-            startTime = System.currentTimeMillis();  //pega o tempo de inicio da descompressao
-            
-            byte[] decodedText = LZW.decode(encodedText);  //descomprime a string
-            
-            endTime = System.currentTimeMillis();  //pega o tempo de fim da descompressao
-            duration = (endTime - startTime);  //calcula o tempo de descompressao
-            durationTotal += duration;
+            startTime = System.currentTimeMillis();  //comeca a contar o tempo de descompressao
+            String decodedText = LZW.decode(encodedText);
+            endTime = System.currentTimeMillis();  //termina de contar o tempo de descompressao
+            stringToArq(original + "LZWDecode" + (i + 1) + ".db",decodedText);
 
-            System.out.println("Tempo de descompressão de numero " + (i + 1) + ": " + duration + " ");
+            duration = (endTime - startTime);  //soma o tempo de descompressao de cada arquivo
+            durationTotal += duration;  //soma o tempo de descompressao de todos os arquivos
+            filePath = original + "LZWEncode" + (i + 1) + ".db";
 
-            BytestoFile(original + "LZWDecode" + (i + 1) + ".db",decodedText);  //transforma a string descomprimida em um arquivo
-
-            filePath = original + "LZWEncode" + (i + 1) + ".db";  //pega o caminho do novo arquivo n a ser descomprimido
-
-            System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + decodedText.length+ " bytes");
-            System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (decodedText).length / data.length * 100 + "%\n");
+            System.out.println("Tempo de descompressão de numero " + (i + 1) + ": " + duration + " ms");
+            System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + decodedText.length()+ " bytes");
+            System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (decodedText).length() / data.length() * 100 + "%\n");
             
         }
-
         return durationTotal;
 
     }
-
     /**
      * @param filePath Caminho do arquivo
      * @param n        Numero de arquivos a serem deletados
