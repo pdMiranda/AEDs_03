@@ -15,7 +15,6 @@ public class LZW {
 
     /**
      * Codifica uma string para uma lista de inteiros
-     * 
      * @param texto
      * @return List<Integer>
      */
@@ -50,7 +49,6 @@ public class LZW {
 
     /**
      * Decodifica uma lista de codigos para uma string
-     * 
      * @param encodedText
      * @return String
      */
@@ -79,6 +77,11 @@ public class LZW {
         return decode.toString();
     }
 
+    /**
+     * Codifica um arquivo -- nao esta sendo usado
+     * @param bytes  byte[] - bytes do arquivo
+     * @return  byte[] - bytes do arquivo codificado
+     */
     public static byte[] encode(byte[] bytes) {
 
         int dictSize = 256;
@@ -113,6 +116,11 @@ public class LZW {
         return encodedBytes;
     }
     
+    /**
+     * Decodifica -- nao esta sendo usado
+     * @param encodedBytes  byte[] - bytes do arquivo
+     * @return  byte[] - bytes do arquivo decodificado
+     */
     public static byte[] decode(byte[] encodedBytes) {
     
         int dictSize = 256;
@@ -144,9 +152,8 @@ public class LZW {
     
     /**
      * Transforma um arquivo em uma string
-     * 
-     * @param io
-     * @return String
+     * @param io  String - nome do arquivo
+     * @return String  - conteudo do arquivo
      */
     public static String arqToString(String io) {
         try {
@@ -167,9 +174,8 @@ public class LZW {
 
     /**
      * Transforma uma List<Integer> em um arquivo
-     * 
-     * @param out
-     * @param texto
+     * @param out  String - nome do arquivo
+     * @param texto  List<Integer> - lista de inteiros
      */
     public static long stringToArq(String out, List<Integer> texto) {
         try {
@@ -187,6 +193,11 @@ public class LZW {
         return 0;
     }
 
+    /**
+     * Transforma um arquivo em uma lista de inteiros
+     * @param io  String - nome do arquivo
+     * @return  List<Integer> - lista de inteiros
+     */
     public static List<Integer> arqToList(String io) {
         try {
             FileInputStream inputFile = new FileInputStream(io);
@@ -203,6 +214,11 @@ public class LZW {
         return null;
     }
 
+    /**
+     * Transforma uma string em uma lista de inteiros
+     * @param texto  String - texto a ser transformado em lista de inteiros
+     * @return  List<Integer> - lista de inteiros
+     */
     public static List<Integer> stringToList(String texto){
         List<Integer> lista = new ArrayList<Integer>();
         for (int i = 0; i < texto.length(); i++) {
@@ -211,6 +227,11 @@ public class LZW {
         return lista;
     }
 
+    /**
+     * Transforma uma lista de inteiros em um array de bytes
+     * @param texto  List<Integer> - lista de inteiros a serem transformados em array de bytes
+     * @return  byte[] - array de bytes
+     */
     public static byte[] bytesFromList(List<Integer> texto){
         byte[] bytes = new byte[texto.size()];
         for (int i = 0; i < texto.size(); i++) {
@@ -219,6 +240,11 @@ public class LZW {
         return bytes;
     }
 
+    /**
+     * Transforma um array de bytes em uma lista de inteiros
+     * @param bytes  byte[] - bytes a serem transformados em lista
+     * @return  List<Integer> - lista de inteiros
+     */
     public static List<Integer> listFromBytes(byte[] bytes){
         List<Integer> lista = new ArrayList<Integer>();
         for (int i = 0; i < bytes.length; i++) {
@@ -227,6 +253,11 @@ public class LZW {
         return lista;
     }
 
+    /**
+     * Transforma uma string em um array de bytes
+     * @param texto  String - texto a ser transformado em bytes
+     * @return  byte[] - bytes do texto
+     */
     public static byte[] stringToByte(String texto){
         byte[] bytes = new byte[texto.length()];
         for (int i = 0; i < texto.length(); i++) {
@@ -235,6 +266,11 @@ public class LZW {
         return bytes;
     }
 
+    /**
+     * Transforma um array de bytes em uma string
+     * @param bytes  byte[] - bytes a serem transformados em texto
+     * @return  String - texto  
+     */
     public static String byteToString(byte[] bytes){
         String texto = "";
         for (int i = 0; i < bytes.length; i++) {
@@ -245,9 +281,9 @@ public class LZW {
 
     /**
      * Transforma uma string em um arquivo
-     * 
-     * @param out
-     * @param texto
+     * @param out  String - caminho do arquivo
+     * @param texto  String - texto a ser escrito no arquivo
+     * @return  long - tamanho do arquivo
      */
     public static long stringToArq(String out, String texto) {
         try {
@@ -265,6 +301,12 @@ public class LZW {
         return 0;
     }
 
+    /**
+     * Transforma um arquivo em um array de bytes
+     * @param filePath  String - caminho do arquivo  
+     * @return  byte[] - array de bytes do arquivo
+     * @throws IOException  
+     */
     public static byte[] getBytesFromFile(String filePath) throws IOException {  //converte o arquivo para array de bytes (isso que resolve o problema de aumentar o arquivo)
         File file = new File(filePath);
         byte[] buffer = new byte[(int) file.length()];

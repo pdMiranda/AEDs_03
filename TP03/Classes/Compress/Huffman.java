@@ -333,7 +333,7 @@ public class Huffman { //Huffman é a classe principal e a arvore
      * @param n  numero de vezes que o arquivo sera descomprimido
      * @return  long duration - tempo de descompressao de todos os arquivos
      * @throws IOException
-     */
+     */    
     public long DecodeFinal(String filePath , int n) throws IOException {
 
         long startTime = 0;  //variaveis para calcular o tempo de descompressao
@@ -351,7 +351,7 @@ public class Huffman { //Huffman é a classe principal e a arvore
             byte[] data = getBytesFromFile(filePath);  //pega o arquivo n em bytes
             Huffman huffman = new Huffman(data);  
 
-            byte[] encodedBytes = huffman.compress();  
+            byte[] encodedBytes = huffman.compress();  //se n fizer desse jeito da NullPointerException
             BytestoFile(original + "HuffmanEncode" + (n - i) + ".db", encodedBytes);
 
             startTime = System.currentTimeMillis();  //comeca a contar o tempo de descompressao
@@ -375,7 +375,7 @@ public class Huffman { //Huffman é a classe principal e a arvore
         return durationTotal;
 
     }
-
+    
     /**
      * @param filePath  caminho do arquivo
      * @param n  numero arquivos que serao deletados
