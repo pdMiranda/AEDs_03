@@ -78,7 +78,7 @@ public class CRUD {
      */
     public void removeInvalid() {
         try{
-            String tmpPath = "TP01/data/musicasTMP.db";
+            String tmpPath = "TP03/Data/musicasTMP.db";
             RandomAccessFile tmp = new RandomAccessFile(tmpPath, "rw");
             long pos, arqLen = arq.length();
             byte lapide;
