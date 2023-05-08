@@ -78,7 +78,7 @@ public class LZW {
     }
 
     /**
-     * Codifica um arquivo -- nao esta sendo usado
+     * Codifica um arquivo
      * @param bytes  byte[] - bytes do arquivo
      * @return  byte[] - bytes do arquivo codificado
      */
@@ -426,6 +426,7 @@ public class LZW {
         return durationTotal;
 
     }
+    
     /**
      * @param filePath Caminho do arquivo
      * @param n        Numero de arquivos a serem deletados
