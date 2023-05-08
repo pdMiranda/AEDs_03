@@ -25,7 +25,7 @@ public class TP03 {
     /* Main */
     /**
      * Fornece um menu com opcoes para carregar o arquivo da base de dados (CSV),
-     * realizar operações do CRUD e fazer ordenações por intercalação balanceada
+     * realizar operações do CRUD e fazer compactacoes e decompactacoes
      */
     public static void main(String[] args) {
         try {
@@ -34,13 +34,15 @@ public class TP03 {
             BufferedReader fr = new BufferedReader(new FileReader(basePath));
 
             // arquivo RAF (registros em bytes)
-            CRUD arquivo = new CRUD("TP03/Data/arquivo.db");
+            CRUD arquivo = new CRUD();
             String dbFile = "TP03/Data/arquivo.db";
 
+            int tamBase = 10000; // tamanho da base csv
             int opc = -1; // opcao do menu
 
+            // compressao
             boolean comprime = false;
-            int vercoes = 0;
+            int versoes = 0;
 
             do {
                 opc = menu();
@@ -51,14 +53,14 @@ public class TP03 {
                         System.out.println("\n**Fazendo carga inicial**");
 
                         String line; // linha do CSV
-                        // lê 10000 musicas (linhas) do CSV, faz parse e cria registros
-                        for (int i = 0; i < 1000; i++) {
+                        // lê tamBase musicas (linhas) do CSV, faz parse e cria registros
+                        for (int i = 0; i < tamBase; i++) {
                             line = fr.readLine();
                             Musica musica = new Musica();
                             musica.parseCSV(line);
                             arquivo.create(musica);
                         }
-                        System.out.println("Base de dados carregada. 1000 registros criados.");
+                        System.out.println("Base de dados carregada. "+tamBase+" registros criados.");
 
                         break;
                     }
@@ -80,6 +82,8 @@ public class TP03 {
                         Musica msc = arquivo.read(readID);
                         if (msc != null)
                             System.out.println("\n" + msc);
+                        else
+                            System.out.println("Musica buscada nao encontrada.");
 
                         break;
                     }
@@ -123,26 +127,24 @@ public class TP03 {
                             opc2 = subMenu();
 
                             switch (opc2) {
-                         
-
                                 case 0: { // Sai do menu interno
                                     System.out.println("\n**Retornando ao menu anterior...**");
                                     break;
                                 }
-                                case 1: {
+                                case 1: { // Comprimir X arquivos
                                     System.out.println("\n**Comprimir X numeros de arquivos**");
 
-                                    System.out.print("\nDigite o numero de vercoes: ");
-                                    vercoes = Integer.parseInt(br.readLine());
+                                    System.out.print("\nDigite o numero de versoes: ");
+                                    versoes = Integer.parseInt(br.readLine());
 
                                     System.out.println("\n**Comprimindo Huffman**");
                                     Huffman huffman = new Huffman();
-                                    long timeHuffman = huffman.EncodeFinal(dbFile, vercoes);
+                                    long timeHuffman = huffman.EncodeFinal(dbFile, versoes);
                                     System.out.println("tempo de execucao: " + timeHuffman + "ms");
 
                                     System.out.println("\n**Comprimindo LZW**");
                                     LZW lzw = new LZW();
-                                    long timeLZW = lzw.EncodeFinal(dbFile, vercoes);
+                                    long timeLZW = lzw.EncodeFinal(dbFile, versoes);
                                     System.out.println("tempo de execucao: " + timeLZW + "ms");
 
                                     System.out.print("\n**Arquivos comprimidos com sucesso**");
@@ -157,18 +159,18 @@ public class TP03 {
                                     break;
                                     
                                 }
-                                case 2:{
+                                case 2: { // Descomprimir X arquivos
                                     if(comprime){
                                         System.out.println("\n**Descomprimir X numeros de arquivos**");
 
                                         System.out.println("\nDescomprimindo Huffman");
                                         Huffman huffman = new Huffman();
-                                        long timeHuffman =  huffman.DecodeFinal(dbFile, vercoes);
+                                        long timeHuffman =  huffman.DecodeFinal(dbFile, versoes);
                                         System.out.println("tempo de execucao: " + timeHuffman + "ms");
 
                                         System.out.println("\nDescomprimindo LZW");
                                         LZW lzw = new LZW();
-                                        long timeLZW = lzw.DecodeFinal(dbFile, vercoes);
+                                        long timeLZW = lzw.DecodeFinal(dbFile, versoes);
                                         System.out.println("tempo de execucao: " + timeLZW + "ms");
 
                                         System.out.println("\n**Arquivos descomprimidos com sucesso**");
@@ -184,16 +186,16 @@ public class TP03 {
                                     }
                                     break;
                                 }
-                                case 3: {
-                                    System.out.println("**Delatando arquivos**");
+                                case 3: { // Deletar arquivos
+                                    System.out.println("\n**Deletando arquivos compactados**");
 
                                     Huffman huffman = new Huffman();
-                                    huffman.DeleteAllFiles(dbFile, vercoes);
+                                    huffman.DeleteAllFiles(dbFile, versoes);
 
                                     LZW lzw = new LZW();
-                                    lzw.DeleteAllFiles(dbFile, vercoes);
+                                    lzw.DeleteAllFiles(dbFile, versoes);
 
-                                    System.out.println("**Arquivos deletados com sucesso**");
+                                    System.out.println("Arquivos deletados com sucesso.");
                                     comprime = false;
                                     break;
                                 }
@@ -204,16 +206,16 @@ public class TP03 {
                     }
                     case 6: { // Fecha arquivo e encerra programa
                         System.out.println("\n**Encerrando programa**");
-                        arquivo.close();
+                        if(arquivo.exists()) arquivo.close();
                         break;
                     }
                     case 7: { // Deleta arquivo
                         System.out.println("\n**Deletando arquivo de registros**");
 
-                        if (arquivo.deleteFile())
-                            System.out.println("Arquivo deletado com sucesso");
+                        if(arquivo.exists() && arquivo.deleteFile())
+                            System.out.println("Arquivo de dados deletado com sucesso.");
                         else
-                            System.out.println("Erro ao deletar arquivo");
+                            System.out.println("Erro ao deletar arquivo de dados.");
 
                         break;
                     }
@@ -269,8 +271,7 @@ public class TP03 {
     }
 
     /**
-     * Mostra submenu na tela e solicita ao usuário qual opção ele deseja executar
-     * (Ordenacao)
+     * Mostra submenu na tela e solicita ao usuário qual opção ele deseja executar (Compressao)
      * 
      * @return int opção lida
      */

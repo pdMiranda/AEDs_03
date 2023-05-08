@@ -5,49 +5,49 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.EOFException;
 import java.io.File;
-import java.util.ArrayList;
 
 /** Classe CRUD **/
 public class CRUD {
     /* Atributos */
-    protected RandomAccessFile arq;
-    protected String path;
-
-    /* Getters e Setters */
-    public RandomAccessFile getArq() {
-        return this.arq;
-    }
-    public void setArq(RandomAccessFile arq) {
-        this.arq = arq;
-    }
-    public String getPath() {
-        return this.path;
-    }
-    public void setPath(String path) {
-        this.path = path;
-    }
+    private RandomAccessFile arq;
+    private final String path = "TP03/Data/arquivo.db";
 
     /* Construtores */
-    public CRUD() throws FileNotFoundException { 
-        this("teste.db");
-    }
-    public CRUD(String path) throws FileNotFoundException {
-        this.path = path; 
-        this.arq = new RandomAccessFile(this.path, "rw");
-        
+    public CRUD() {
+        // abrir ou criar arquivo
         try{
-            arq.seek(0);
-
-            if(arq.length() == 0)
+            arq = new RandomAccessFile(path, "rw");
+            
+            // cria arquivo se nao existir
+            if(!exists()){
+                arq.seek(0);
                 arq.writeInt(0); // ultimoID inicial
+            }
+        } catch(FileNotFoundException fnfe){
+            System.err.println(fnfe.getMessage());
         } catch(IOException ioe){
-            System.err.println("Erro ao inicializar CRUD");
-            ioe.printStackTrace();
+            System.err.println(ioe.getMessage());
         }
     }
 
     /* Métodos */
         /* Manipulação do arquivo */
+    /**
+     * Verifica se arquivo ja existe 
+     * @return true se sim, false se nao
+     */
+    public boolean exists() {
+        boolean existe = false;
+
+        try{
+            if(arq.length() != 0)
+                existe = true;
+        } catch(IOException ioe){
+            System.err.println(ioe.getMessage());
+        }
+
+        return existe;
+    }
     /**
      * Fecha arquivo RandomAcessFile
      */
@@ -217,48 +217,6 @@ public class CRUD {
 
                     // imprime registro
                     System.out.println("\n"+obj);
-                } else{
-                    arq.skipBytes(regSize); // pula registro
-                }
-                
-                pos = arq.getFilePointer(); // início do próximo registro (lápide)
-            }
-        } catch(IOException ioe){
-            System.err.println("Erro ao ler registros no arquivo");
-            ioe.printStackTrace();
-        }
-    }
-    /**
-     * Imprime n duration_ms dos registros válidos do arquivo (lapide falsa)
-     * @param n qtd de registros a serem imprimidos
-     */
-    public void printNDurationMs(int n) {
-        try{
-            long pos, arqLen = arq.length();
-            byte lapide;
-            int regSize, i = 0;
-
-            // posiciona ponteiro no início, pula cabeçalho e salva posição
-            arq.seek(0); 
-            arq.skipBytes(Integer.BYTES);
-            pos = arq.getFilePointer();
-            
-            while(pos != arqLen && i < n){
-                // lê primeiros dados
-                lapide = arq.readByte();
-                regSize = arq.readInt();
-                
-                if(lapide == ' '){ // lapide falsa => registro não excluído
-                    // lê registro em bytes e converte para objeto 
-                    byte[] data = new byte[regSize];
-                    arq.read(data);
-                    Musica obj = new Musica();
-                    obj.fromByteArray(data);
-
-                    // imprime duration_ms do registro
-                    System.out.println(obj.getDuration_ms());
-
-                    i++;
                 } else{
                     arq.skipBytes(regSize); // pula registro
                 }
@@ -538,40 +496,5 @@ public class CRUD {
         }
 
         return found;
-    }
-
-    public ArrayList<Musica> getBlock(long pos, int tam) {
-        ArrayList<Musica> bloco = new ArrayList<Musica>();
-
-        try{
-            int regSize, i = 0;
-
-            // posiciona ponteiro no início do bloco
-            arq.seek(pos); 
-
-            while(i < tam){
-                try{
-                    // lê primeiros dados
-                    arq.skipBytes(1); // pula a lápide
-                    regSize = arq.readInt();
-
-                    // lê registro em bytes e converte para objeto 
-                    byte[] data = new byte[regSize];
-                    arq.read(data);
-                    bloco.add( new Musica() );
-                    bloco.get(i).fromByteArray(data);
-
-                    i++;
-                    pos = arq.getFilePointer(); // início do próximo registro (lápide)
-                } catch(EOFException eofe){
-                    break;
-                }
-            }
-        } catch(IOException ioe){
-            System.err.println("Erro de leitura/escrita ao ler bloco do arquivo");
-            ioe.printStackTrace();
-        }
-
-        return bloco;
     }
 }
