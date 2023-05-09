@@ -390,7 +390,7 @@ public class LZW {
      * @return long
      * @throws IOException 
      */
-    public long DecodeFinal(String filePath , int n){
+    public long DecodeFinal(String filePath , int n) throws IOException{
 
         long startTime = 0;  //variaveis para calcular o tempo de descompressao
         long endTime = 0;
@@ -404,23 +404,32 @@ public class LZW {
         System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
 
         for(int i = 0; i < n; i++){
-            String data = arqToString(filePath);
 
-            List<Integer> encodedText = LZW.encode(data);
-            stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText);
+            byte[] test = getBytesFromFile(original + "LZWEncode" + (i + 1) + ".db");
+            if(test.length > 0){
+                String data = arqToString(filePath);
 
-            startTime = System.currentTimeMillis();  //comeca a contar o tempo de descompressao
-            String decodedText = LZW.decode(encodedText);
-            endTime = System.currentTimeMillis();  //termina de contar o tempo de descompressao
-            stringToArq(original + "LZWDecode" + (i + 1) + ".db",decodedText);
+                List<Integer> encodedText = LZW.encode(data);
+                stringToArq(original + "LZWEncode" + (i + 1) + ".db", encodedText);
+    
+                startTime = System.currentTimeMillis();  //comeca a contar o tempo de descompressao
+                String decodedText = LZW.decode(encodedText);
+                endTime = System.currentTimeMillis();  //termina de contar o tempo de descompressao
+                stringToArq(original + "LZWDecode" + (i + 1) + ".db",decodedText);
+    
+                duration = (endTime - startTime);  //soma o tempo de descompressao de cada arquivo
+                durationTotal += duration;  //soma o tempo de descompressao de todos os arquivos
+                filePath = original + "LZWEncode" + (i + 1) + ".db";
+    
+                System.out.println("Tempo de descompressão de numero " + (i + 1) + ": " + duration + " ms");
+                System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + decodedText.length()+ " bytes");
+                System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (decodedText).length() / data.length() * 100 + "%\n");
+            }
+            else{
+                return -1;
+            }
 
-            duration = (endTime - startTime);  //soma o tempo de descompressao de cada arquivo
-            durationTotal += duration;  //soma o tempo de descompressao de todos os arquivos
-            filePath = original + "LZWEncode" + (i + 1) + ".db";
-
-            System.out.println("Tempo de descompressão de numero " + (i + 1) + ": " + duration + " ms");
-            System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + decodedText.length()+ " bytes");
-            System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (decodedText).length() / data.length() * 100 + "%\n");
+            
             
         }
         return durationTotal;

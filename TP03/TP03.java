@@ -37,12 +37,14 @@ public class TP03 {
             CRUD arquivo = new CRUD();
             String dbFile = "TP03/Data/arquivo.db";
 
-            int tamBase = 10000; // tamanho da base csv
+            int tamBase = 1000; // tamanho da base csv
             int opc = -1; // opcao do menu
 
             // compressao
             boolean comprime = false;
             int versoes = 0;
+            int tmp = 0;
+            int maior = 0;
 
             do {
                 opc = menu();
@@ -135,7 +137,11 @@ public class TP03 {
                                     System.out.println("\n**Comprimir X numeros de arquivos**");
 
                                     System.out.print("\nDigite o numero de versoes: ");
+                                    tmp = versoes;
                                     versoes = Integer.parseInt(br.readLine());
+                                    if(versoes < tmp){
+                                        maior = tmp;
+                                    }
 
                                     System.out.println("\n**Comprimindo Huffman**");
                                     Huffman huffman = new Huffman();
@@ -190,13 +196,16 @@ public class TP03 {
                                     System.out.println("\n**Deletando arquivos compactados**");
 
                                     Huffman huffman = new Huffman();
+                                    if(maior > versoes){
+                                        versoes = maior;
+                                    }
                                     huffman.DeleteAllFiles(dbFile, versoes);
 
                                     LZW lzw = new LZW();
                                     lzw.DeleteAllFiles(dbFile, versoes);
 
                                     System.out.println("Arquivos deletados com sucesso.");
-                                    comprime = false;
+                                    //comprime = false;
                                     break;
                                 }
                             }

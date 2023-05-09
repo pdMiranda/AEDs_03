@@ -348,28 +348,37 @@ public class Huffman { //Huffman é a classe principal e a arvore
         System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
 
         for(int i = 0; i < n; i++){  //descomprime o arquivo n vezes
-            byte[] data = getBytesFromFile(filePath);  //pega o arquivo n em bytes
-            Huffman huffman = new Huffman(data);  
+            byte[] test = getBytesFromFile(original + "HuffmanEncode" + (i + 1) + ".db");  //pega o arquivo n em bytes
 
-            byte[] encodedBytes = huffman.compress();  //se n fizer desse jeito da NullPointerException
-            BytestoFile(original + "HuffmanEncode" + (n - i) + ".db", encodedBytes);
+            if (test.length == 0) {  //se o arquivo nao existir, retorna -1
+                System.out.println("Arquivo " + (i + 1) + " não existe");  
+                return -1;   
+            }
+            else{ //
+                byte[] data = getBytesFromFile(filePath);  //pega o arquivo n em bytes
+                Huffman huffman = new Huffman(data);  
+    
+                byte[] encodedBytes = huffman.compress();  //se n fizer desse jeito da NullPointerException
+                //BytestoFile(original + "HuffmanEncode" + (n - i) + ".db", encodedBytes);
+    
+                startTime = System.currentTimeMillis();  //comeca a contar o tempo de descompressao
+                
+                byte[] decodedBytes = huffman.decompress(encodedBytes);  //descomprime o arquivo 
+    
+                endTime = System.currentTimeMillis();  //termina de contar o tempo de descompressao
+                duration = (endTime - startTime);  //soma o tempo de descompressao de cada arquivo
+                durationTotal += duration;  //soma o tempo de descompressao de todos os arquivos
+    
+                BytestoFile(original + "HuffmanDecode" + (i + 1)  + ".db", decodedBytes);  //cria o arquivo n descomprimido
+                System.out.println("Tempo de descompressão de numero " + (i + 1)  + ": " + duration + " ");
+    
+    
+                filePath = original + "HuffmanEncode" + (i + 1 )  + ".db";  //muda o caminho do arquivo para o descomprimir o novo arquivo
+    
+                System.out.println("Tamanho do arquivo descomprimido de numero " + (i + 1)  + ": " + (decodedBytes).length + " bytes");
+                System.out.println("Taxa de descompressão de numero " + (i + 1)  + ": " + (float) (decodedBytes).length / (float)data.length* 100 + "%\n");
+            }
 
-            startTime = System.currentTimeMillis();  //comeca a contar o tempo de descompressao
-            
-            byte[] decodedBytes = huffman.decompress(encodedBytes);  //descomprime o arquivo 
-
-            endTime = System.currentTimeMillis();  //termina de contar o tempo de descompressao
-            duration = (endTime - startTime);  //soma o tempo de descompressao de cada arquivo
-            durationTotal += duration;  //soma o tempo de descompressao de todos os arquivos
-
-            BytestoFile(original + "HuffmanDecode" + (n - i)  + ".db", decodedBytes);  //cria o arquivo n descomprimido
-            System.out.println("Tempo de descompressão de numero " + (n - i)  + ": " + duration + " ");
-
-
-            filePath = original + "HuffmanEncode" + (n - i )  + ".db";  //muda o caminho do arquivo para o descomprimir o novo arquivo
-
-            System.out.println("Tamanho do arquivo descomprimido de numero " + (n - i)  + ": " + (decodedBytes).length + " bytes");
-            System.out.println("Taxa de descompressão de numero " + (n - i)  + ": " + (float) (decodedBytes).length / (float)data.length* 100 + "%\n");
         }
 
         return durationTotal;
