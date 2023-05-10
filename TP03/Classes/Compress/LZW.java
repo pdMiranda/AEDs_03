@@ -121,6 +121,8 @@ public class LZW {
      * @param encodedBytes  byte[] - bytes do arquivo
      * @return  byte[] - bytes do arquivo decodificado
      */
+
+     /* 
     public static byte[] decode(byte[] encodedBytes) {
     
         int dictSize = 256;
@@ -149,6 +151,39 @@ public class LZW {
         }
         return decode.toString().getBytes();
     }
+    */
+
+    /**
+     * Decodifica -- nao esta sendo usado
+     * @param encodedBytes  byte[] - bytes do arquivo
+     * @return  byte[] - bytes do arquivo decodificado
+     */
+    public static byte[] decode(byte[] encodedBytes) {
+
+        List<Integer> encodedText = listFromBytes(encodedBytes);
+        int dictSize = 256;
+        Map<Integer, String> dicionario = new HashMap<Integer, String>();
+
+        for (int i = 0; i < dictSize; i++) {
+            dicionario.put(i, String.valueOf((char) i));
+        }
+
+        String codigo = String.valueOf((char) encodedText.remove(0).intValue()); // pega o primeiro codigo e transforma em caracter
+                                                                                
+        StringBuffer decode = new StringBuffer(codigo); // adiciona o caracter no buffer
+
+        for (int code : encodedText) { // percorre a lista de codigos
+
+            String entrada = dicionario.containsKey(code) ? dicionario.get(code) : (codigo + codigo.charAt(0));  // se o dicionario contem o codigo, pega a palavra correspondente, senao, pega a palavra atual + o primeiro caracter da palavra atual
+            decode.append(entrada);
+
+            dicionario.put(dictSize++, codigo + entrada.charAt(0)); // adiciona a palavra atual + o primeiro caracter da palavra atual no dicionario
+
+            codigo = entrada;
+        }
+        return decode.toString().getBytes();
+    }
+
     
     /**
      * Transforma um arquivo em uma string
@@ -335,6 +370,8 @@ public class LZW {
         
     }
 
+ 
+
     /**
      * Comprime o arquivo
      * @param filePath String
@@ -435,6 +472,55 @@ public class LZW {
         return durationTotal;
 
     }
+    
+
+    /* 
+    public long DecodeFinal(String filePath , int n) throws IOException{
+
+        long startTime = 0;  //variaveis para calcular o tempo de descompressao
+        long endTime = 0;
+        long duration = 0;
+        long durationTotal = 0;
+
+        String original = filePath.substring(0, filePath.length() - 3);
+
+        String originalFile = arqToString(filePath);
+        long tamanhoOriginal = (originalFile).length();
+        System.out.println("Tamanho do arquivo original: " + tamanhoOriginal + " bytes");
+
+        for(int i = 0; i < n; i++){
+
+            byte[] test = getBytesFromFile(original + "LZWEncode" + (i + 1) + ".db");
+            if(test.length > 0){
+                byte[] data = getBytesFromFile(filePath);
+
+                byte[] encodedText = LZW.encode(data);
+                BytestoFile(original + "LZWEncode" + (i + 1) + ".db", encodedText);
+    
+                startTime = System.currentTimeMillis();  //comeca a contar o tempo de descompressao
+                byte[] decodedText = LZW.decode(encodedText);
+                endTime = System.currentTimeMillis();  //termina de contar o tempo de descompressao
+                BytestoFile(original + "LZWDecode" + (i + 1) + ".db",decodedText);
+    
+                duration = (endTime - startTime);  //soma o tempo de descompressao de cada arquivo
+                durationTotal += duration;  //soma o tempo de descompressao de todos os arquivos
+                filePath = original + "LZWEncode" + (i + 1) + ".db";
+    
+                System.out.println("Tempo de descompressão de numero " + (i + 1) + ": " + duration + " ms");
+                System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + decodedText.length+ " bytes");
+                System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (decodedText).length / data.length * 100 + "%\n");
+            }
+            else{
+                return -1;
+            }
+
+            
+            
+        }
+        return durationTotal;
+
+    }
+    */
     
     /**
      * @param filePath Caminho do arquivo
