@@ -412,7 +412,7 @@ public class LZW {
             filePath = original + "LZWEncode" + (i + 1) + ".db"; // pega o caminho do novo arquivo n a ser comprimido
 
             System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + encodedText.length + " bytes");
-            System.out.println("Taxa de compressão de numero " + (i + 1) + ": "+ (float) (encodedText).length / tamanhoOriginal * 100 + "%\n");
+            System.out.println("Taxa de compressão de numero " + (i + 1) + ": "+ ((float) (encodedText).length / tamanhoOriginal * 100 + "%\n"));
 
         }
 

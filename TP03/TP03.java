@@ -205,7 +205,7 @@ public class TP03 {
                                     lzw.DeleteAllFiles(dbFile, versoes);
 
                                     System.out.println("Arquivos deletados com sucesso.");
-                                    //comprime = false;
+                                    comprime = false;
                                     break;
                                 }
                             }

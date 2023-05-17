@@ -320,7 +320,7 @@ public class Huffman { //Huffman é a classe principal e a arvore
             filePath = original + "HuffmanEncode" + (i + 1) + ".db";  //muda o caminho do arquivo para o comprimir o novo arquivo
 
             System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + (encodedBytes).length + " bytes");
-            System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (encodedBytes).length / tamanhoOriginal * 100 + "%\n");
+            System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + ((float) (encodedBytes).length / tamanhoOriginal * 100 + "%\n"));
             
         }
 
