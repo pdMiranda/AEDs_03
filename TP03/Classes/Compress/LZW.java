@@ -459,8 +459,8 @@ public class LZW {
                 filePath = original + "LZWEncode" + (i + 1) + ".db";
     
                 System.out.println("Tempo de descompressão de numero " + (i + 1) + ": " + duration + " ms");
-                System.out.println("Tamanho do arquivo comprimido de numero " + (i + 1) + ": " + decodedText.length()+ " bytes");
-                System.out.println("Taxa de compressão de numero " + (i + 1) + ": " + (float) (decodedText).length() / data.length() * 100 + "%\n");
+                System.out.println("Tamanho do arquivo descomprimido de numero " + (i + 1) + ": " + decodedText.length()+ " bytes");
+                System.out.println("Taxa de descompressão de numero " + (i + 1) + ": " + (float) (decodedText).length() / data.length() * 100 + "%\n");
             }
             else{
                 return -1;
