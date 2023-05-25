@@ -67,7 +67,8 @@ public class KMP {
             while (index >= 0) {  // enquanto o índice do padrão for maior ou igual a 0  
                 count++;  // incrementa o contador
                 System.out.println("Padrao \"" + pattern + "\" achado na linha " + lineNumber + ", posicao " + index + ".");
-                index = search(line.substring(index + 1), pattern);  // índice do padrão na linha a partir da posição index + 1
+                line = line.substring(index + 1);  // linha a partir da posição index + 1
+                index = search(line, pattern);  // índice do padrão na linha a partir da posição index + 1
             }
             lineNumber++;
         }
