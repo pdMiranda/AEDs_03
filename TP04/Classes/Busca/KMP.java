@@ -3,6 +3,8 @@ package TP04.Classes.Busca;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KMP {    
 
@@ -61,15 +63,25 @@ public class KMP {
         BufferedReader reader = new BufferedReader(new FileReader(path));
         String line;
         int lineNumber = 1;
+        int aux = 0;
         while ((line = reader.readLine()) != null) { // para cada linha do arquivo
             // search for the pattern in each line
+            List<Integer> indexes = new ArrayList<Integer>();  // lista de índices do padrão na linha
             int index = search(line, pattern);  // índice do padrão na linha
+            aux = index;
             while (index >= 0) {  // enquanto o índice do padrão for maior ou igual a 0  
                 count++;  // incrementa o contador
+                indexes.add(aux);  // adiciona o índice do padrão na lista de índices
                 System.out.println("Padrao \"" + pattern + "\" achado na linha " + lineNumber + ", posicao " + index + ".");
                 line = line.substring(index + 1);  // linha a partir da posição index + 1
                 index = search(line, pattern);  // índice do padrão na linha a partir da posição index + 1
+                aux += index + 2;
             }
+
+            if(indexes.size() > 0){
+                System.out.println("Padrao \"" + pattern + "\" achado na linha " + lineNumber + ", posicao(es) " + indexes + ".");
+            }
+
             lineNumber++;
         }
         reader.close();
