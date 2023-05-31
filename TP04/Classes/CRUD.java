@@ -5,12 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileWriter;
 
 /** Classe CRUD **/
 public class CRUD {
     /* Atributos */
     private RandomAccessFile arq;
     private final String path = "TP04/Data/arquivo.db";
+    private final String pathTxt = "TP04/Data/arquivo.txt"; 
 
     /* Construtores */
     public CRUD() {
@@ -72,6 +74,72 @@ public class CRUD {
             sucesso = true;
 
         return sucesso;
+    }
+    /**
+     * Deleta arquivo texto
+     */
+    public void deleteTxt() {
+        // abre arquivo texto
+        File txt = new File(pathTxt);
+        
+        // verifica se arquivo esta preenchido
+        if(txt.length() != 0){
+            txt.delete(); // deleta arquivo
+        }
+    }
+    /**
+     * Converte arquivo de bytes para texto, lendo apenas musicas validas 
+     */
+    public void toText() {
+        if(exists()){
+            String text = ""; // arquivo em texto
+            
+            try{
+                long pos, arqLen = arq.length();
+                byte lapide;
+                int regSize;
+
+                // posiciona ponteiro no inicio, pula cabecalho e salva posicao
+                arq.seek(Integer.BYTES); 
+                pos = arq.getFilePointer();
+                
+                while(pos != arqLen){
+                    // le primeiros dados
+                    lapide = arq.readByte();
+                    regSize = arq.readInt();
+                    
+                    if(lapide == ' '){ // lapide falsa => registro nao excluido
+                        // le registro em bytes e converte para objeto 
+                        byte[] data = new byte[regSize];
+                        arq.read(data);
+                        Musica obj = new Musica();
+                        obj.fromByteArray(data);
+                        
+                        // concatena Musica como string ao texto atual 
+                        text = text + obj.toString() + "\n";
+                    } else{
+                        arq.skipBytes(regSize); // pula registro
+                    }
+                    
+                    pos = arq.getFilePointer(); // inicio do próximo registro (lapide)
+                }
+            } catch(IOException ioe){
+                System.err.println("Erro ao ler registros no arquivo.db");
+                ioe.printStackTrace();
+            }
+
+            try{
+                // cria arquivo texto para escrita
+                FileWriter fw = new FileWriter(pathTxt);
+                
+                // escreve string com Musicas validas
+                fw.write(text);
+                fw.close();
+            } catch(IOException ioe){
+                System.err.println("Erro ao escrever arquivo como texto");
+                ioe.printStackTrace();
+            }
+        }
     }
     /**
      * Refaz o arquivo, retirando os registros com lapide verdadeira (excluidos)

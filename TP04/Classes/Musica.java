@@ -81,11 +81,11 @@ public class Musica {
     public String toString() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return "ID: "+this.ID+
-               "\nDuration_ms: "+this.duration_ms+
-               "\nRelease_date: "+sdf.format(this.release_date)+
-               "\nTrack_id: "+this.track_id+
-               "\nName: "+this.name+
-               "\nArtists: "+this.artists.toString();
+               " | Duration_ms: "+this.duration_ms+
+               " | Release_date: "+sdf.format(this.release_date)+
+               " | Track_id: "+this.track_id+
+               " | Name: "+this.name+
+               " | Artists: "+this.artists.toString();
     }
     /**
      * @return objeto clone do objeto corrente
