@@ -3,17 +3,68 @@ package TP04.Classes.Busca;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class KMP {    
+    /**
+     * Funcao principal
+     * @param path String -- caminho do arquivo
+     * @param pattern String -- padrão a ser buscado
+     */
+    public static void searchPattern(String path, String pattern) {
+        int count = 0; // contar quantas vezes o padrão foi encontrado
+        
+        try{
+            // ler o arquivo
+            BufferedReader reader = new BufferedReader(new FileReader(path));
+            
+            String line;
+            int lineNumber = 1;
+            int aux = 0;
+            while ((line = reader.readLine()) != null) { // para cada linha do arquivo
+                // search for the pattern in each line
+                List<Integer> indexes = new ArrayList<Integer>();  // lista de índices do padrão na linha
+                int index = search(line, pattern);  // índice do padrão na linha
+                aux = index;
+                while (index >= 0) {  // enquanto o índice do padrão for maior ou igual a 0  
+                    count++;  // incrementa o contador
+                    indexes.add(aux);  // adiciona o índice do padrão na lista de índices
+                    System.out.println("Padrao \"" + pattern + "\" achado na linha " + lineNumber + ", posicao " + index + ".");
+                    line = line.substring(index + 1);  // linha a partir da posição index + 1
+                    index = search(line, pattern);  // índice do padrão na linha a partir da posição index + 1
+                    aux += index + 2;
+                }
 
+                if(indexes.size() > 0){
+                    System.out.println("Padrao \"" + pattern + "\" achado na linha " + lineNumber + ", posicao(es) " + indexes + ".");
+                }
+
+                lineNumber++;
+            }
+
+            reader.close();
+        } catch(FileNotFoundException fnfe){
+            System.err.println("Arquivo txt para casamento de padroes nao encontrado");
+            fnfe.printStackTrace();
+        } catch(IOException ioe){
+            System.err.println("Erro de leitura/escrita no casamento de padroes (KMP)");
+            ioe.printStackTrace();
+        }
+
+        if(count > 0){ // padrao encontrado
+            System.out.println("Encontrados " + count + " padroes \"" + pattern + "\".");
+        } else{ // padrao nao encontrado
+            System.out.println("Padrao nao encontrado.");
+        }
+    }
     /**
      * @param text String -- texto para ser buscado
      * @param pattern String -- padrão a ser buscado
      * @return  índice da primeira ocorrência do padrão no texto, ou -1 se não for encontrado
      */
-    public static int search(String text, String pattern) {
+    private static int search(String text, String pattern) {
         int n = text.length();
         int m = pattern.length();
 
@@ -49,47 +100,6 @@ public class KMP {
             return i - m;  // retorna o índice do texto menos o tamanho do padrão
         } else {  // se o índice do padrão for diferente do tamanho do padrão - 1
             return -1;
-        }
-    }
-    
-    /**
-     * @param path String -- caminho do arquivo
-     * @param pattern  String -- padrão a ser buscado
-     * @throws IOException -- exceção de entrada e saída
-     */
-    public void BuscaAll(String path, String pattern) throws IOException {
-        int count = 0; // contar quantas vezes o padrão foi encontrado
-        // ler o arquivo
-        BufferedReader reader = new BufferedReader(new FileReader(path));
-        String line;
-        int lineNumber = 1;
-        int aux = 0;
-        while ((line = reader.readLine()) != null) { // para cada linha do arquivo
-            // search for the pattern in each line
-            List<Integer> indexes = new ArrayList<Integer>();  // lista de índices do padrão na linha
-            int index = search(line, pattern);  // índice do padrão na linha
-            aux = index;
-            while (index >= 0) {  // enquanto o índice do padrão for maior ou igual a 0  
-                count++;  // incrementa o contador
-                indexes.add(aux);  // adiciona o índice do padrão na lista de índices
-                System.out.println("Padrao \"" + pattern + "\" achado na linha " + lineNumber + ", posicao " + index + ".");
-                line = line.substring(index + 1);  // linha a partir da posição index + 1
-                index = search(line, pattern);  // índice do padrão na linha a partir da posição index + 1
-                aux += index + 2;
-            }
-
-            if(indexes.size() > 0){
-                System.out.println("Padrao \"" + pattern + "\" achado na linha " + lineNumber + ", posicao(es) " + indexes + ".");
-            }
-
-            lineNumber++;
-        }
-        reader.close();
-
-        if (count > 0) { // padrao encontrado
-            System.out.println("Achados " + count + " padroes \"" + pattern + "\".");
-        } else { // padrao nao encontrado
-            System.out.println("Padrao nao encontrado.");
         }
     }
 }

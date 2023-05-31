@@ -3,9 +3,49 @@ package TP04.Classes.Busca;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class BoyerMoore {
-    
+    /**
+     * Funcao principal
+     * @param path String -- caminho do arquivo de texto
+     * @param pattern  String -- padrão a ser buscado
+     */
+    public static void searchPattern(String path, String pattern) {
+        int count = 0; // contar quantas vezes o padrão foi encontrado
+        
+        try{
+            // ler o arquivo
+            BufferedReader br = new BufferedReader(new FileReader(path));
+
+            String line;
+            int lineNumber = 1;
+            while ((line = br.readLine()) != null) {
+                // procura pelo padrao em cada linha
+                int index = search(line, pattern);  // procura pelo padrão na linha
+                while (index >= 0) {  // enquanto o índice for maior ou igual a 0
+                    count++;
+                    System.out.println("Padrao \"" + pattern + "\" achado na linha " + lineNumber + ", posicao " + index + ".");
+                    index = search(line.substring(index + 1), pattern);  // procura pelo padrão na linha a partir do índice + 1
+                }
+                lineNumber++;
+            }
+
+            br.close();
+        } catch(FileNotFoundException fnfe){
+            System.err.println("Arquivo txt para casamento de padroes nao encontrado");
+            fnfe.printStackTrace();
+        } catch(IOException ioe){
+            System.err.println("Erro de leitura/escrita no casamento de padroes (BoyerMoore)");
+            ioe.printStackTrace();
+        }
+
+        if(count > 0){ // padrao encontrado
+            System.out.println("Encontrados " + count + " padroes \"" + pattern + "\".");
+        } else{ // padrao nao encontrado
+            System.out.println("Padrao nao encontrado.");
+        } 
+    }
     /**
      * @param text  texto para ser buscado
      * @param pattern  padrão a ser buscado
@@ -41,38 +81,6 @@ public class BoyerMoore {
             return i + 1; 
         } else {  // se não, o padrão não foi encontrado
             return -1;
-        }
-    }
-
-    /**
-     * @param path String -- caminho do arquivo de texto
-     * @param pattern  String -- padrão a ser buscado
-     * @throws IOException -- exceção de entrada e saída
-     */
-    public static void searchAll(String path, String pattern) throws IOException{
-        int count = 0; // contar o numero de ocorrencias
-
-        // le o arquivo de texto
-        BufferedReader br = new BufferedReader(new FileReader(path));
-        String line;
-        int lineNumber = 1;
-        while ((line = br.readLine()) != null) {
-            // procura pelo padrao em cada linha
-            int index = search(line, pattern);  // procura pelo padrão na linha
-            while (index >= 0) {  // enquanto o índice for maior ou igual a 0
-                count++;
-                System.out.println("Padrao \"" + pattern + "\" achado na linha " + lineNumber + ", posicao " + index + ".");
-                index = search(line.substring(index + 1), pattern);  // procura pelo padrão na linha a partir do índice + 1
-            }
-            lineNumber++;
-        }
-        br.close();
-
-        if(count > 0){
-            System.out.println("Encontrado " + count + " correspondências do padrão \"" + pattern + "\".");
-        }
-        else{
-            System.out.println("Padrão não encontrado.");
         }
     }
 }
