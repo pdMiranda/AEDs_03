@@ -13,12 +13,12 @@ import java.io.IOException;
 /** Classe Musica **/
 public class Musica {
     /* Atributos */
-    protected int ID;
-    protected int duration_ms;
-    protected Date release_date;
-    protected String track_id, // string de tamanho fixo (22) 
+    private int ID;
+    private int duration_ms;
+    private Date release_date;
+    private String track_id, // string de tamanho fixo (22) 
                      name;    // string de tamanho variável
-    protected ArrayList<String> artists;
+    private ArrayList<String> artists;
 
     /* Getters e Setters */ 
     public int getID() {
@@ -143,7 +143,8 @@ public class Musica {
             try{
                 this.release_date = sdf.parse(dis.readUTF()); 
             } catch(ParseException pe){
-
+                System.err.println("Erro ao fazer parse da data");
+                pe.printStackTrace();
             }
     
             this.track_id = dis.readUTF();
@@ -154,7 +155,8 @@ public class Musica {
                 artists.add(dis.readUTF());
             }
         } catch(IOException ioe){
-
+            System.err.println("Erro ao ler atributo de bytes");
+            ioe.printStackTrace();
         }
     }
         /* Database */
