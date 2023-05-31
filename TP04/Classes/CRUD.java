@@ -14,6 +14,14 @@ public class CRUD {
     private final String path = "TP04/Data/arquivo.db";
     private final String pathTxt = "TP04/Data/arquivo.txt"; 
 
+    /* Getters */
+    public String getPathArq(){
+        return path;
+    }
+    public String getPathTxt(){
+        return pathTxt;
+    }
+
     /* Construtores */
     public CRUD() {
         // abrir ou criar arquivo

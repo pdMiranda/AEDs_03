@@ -122,8 +122,16 @@ public class TP04 {
                         System.out.print("Padrao a ser buscado: ");
                         String padrao = br.readLine();
 
+                        // converte arquivo de bytes para texto
+                        arquivo.toText();
+
                         // executar tds os algoritmos e imprimir comparacoes/tempo
-                        
+                        KMP.searchPattern(arquivo.getPathTxt(), padrao);
+                        BoyerMoore.searchPattern(arquivo.getPathTxt(), padrao);
+                        ShiftAnd.searchPattern(arquivo.getPathTxt(), padrao);
+
+                        // deleta arquivo txt
+                        arquivo.deleteTxt();
 
                         break;
                     }
