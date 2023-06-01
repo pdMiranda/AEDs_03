@@ -126,12 +126,19 @@ public class TP04 {
                         arquivo.toText();
 
                         // executar tds os algoritmos e imprimir comparacoes/tempo
+                        System.out.println("\n******************************** KMP ********************************");
                         KMP.searchPattern(arquivo.getPathTxt(), padrao);
-                        BoyerMoore.searchPattern(arquivo.getPathTxt(), padrao);
+                        System.out.println("\n***************************** Shift-And *****************************");
                         ShiftAnd.searchPattern(arquivo.getPathTxt(), padrao);
+                        System.out.println("\n**************************** Boyer-Moore ***************************");
+                        BoyerMoore.searchPattern(arquivo.getPathTxt(), padrao);
 
-                        // deleta arquivo txt
-                        arquivo.deleteTxt();
+                        System.out.println("Deseja excluir arquivo texto [S|N]? ");
+                        String excluir = br.readLine();
+                        if( Character.toUpperCase(excluir.charAt(0)) == 'S' ){
+                            // deleta arquivo txt
+                            arquivo.deleteTxt();
+                        } 
 
                         break;
                     }

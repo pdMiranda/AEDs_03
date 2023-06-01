@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KMP {   
-    
-     private static int comp = 0; // contador de comparações
+    private static int comp = 0; // contador de comparações
     
     /**
      * Funcao principal
@@ -18,7 +17,8 @@ public class KMP {
      */
     public static void searchPattern(String path, String pattern) {
         int count = 0; // contar quantas vezes o padrão foi encontrado
-        
+        long start = 0, end = 0; // tempo de inicio e fim
+
         try{
             // ler o arquivo
             BufferedReader reader = new BufferedReader(new FileReader(path));
@@ -26,8 +26,11 @@ public class KMP {
             String line;
             int lineNumber = 1;
             int aux = 0;
+
+            start = System.currentTimeMillis(); // marca inicio
+            
             while ((line = reader.readLine()) != null) { // para cada linha do arquivo
-                // search for the pattern in each line
+                // busca o padrão na linha
                 List<Integer> indexes = new ArrayList<Integer>();  // lista de índices do padrão na linha
                 int index = search(line, pattern);  // índice do padrão na linha
                 aux = index;
@@ -45,6 +48,8 @@ public class KMP {
 
                 lineNumber++;
             }
+            
+            end = System.currentTimeMillis(); // marca fim
 
             reader.close();
         } catch(FileNotFoundException fnfe){
@@ -61,15 +66,15 @@ public class KMP {
             System.out.println("Padrao nao encontrado.");
         }
 
-        System.out.println("Comparações: " + comp);
-
+        // imprime qtd de comparacoes e tempo de execucao
+        System.out.println("Comparacoes: " + comp);
+        System.out.println("Tempo de execucao: " + (end-start) + " ms");
     }
-
-     /**
+    /**
      * @param pattern String -- padrão a ser buscado
      * @return tabela de prefixos
      */
-    public static int[] prefix(String pattern) { 
+    private static int[] prefix(String pattern) { 
         int m = pattern.length();
         int[] prefix = new int[m]; //Criando o vetor de prefixos 
         prefix[0] = -1;  // o primeiro elemento da tabela de prefixos é -1
@@ -85,13 +90,12 @@ public class KMP {
         }
         return prefix;
     }   
-
     /**
      * @param text String -- texto para ser buscado
      * @param pattern String -- padrão a ser buscado
      * @return  índice da primeira ocorrência do padrão no texto, ou -1 se não for encontrado
      */ 
-    public static int search(String text, String pattern) {
+    private static int search(String text, String pattern) {
         int n = text.length();
         int m = pattern.length();
 
