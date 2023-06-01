@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShiftAnd {
+
+    private static int comp = 0; // contador de comparações
+
     /**
      * Funcao principal
      * @param path String -- caminho do arquivo
@@ -23,11 +26,12 @@ public class ShiftAnd {
             String line;
             int lineNumber = 1;
             while ((line = br.readLine()) != null) {  // le o arquivo linha por linha
+                
                 List<Integer> indices = search(line, pattern);  // busca o padrão na linha
                 if (!indices.isEmpty()) {
-                    for(int i : indices){  // imprime os índices das ocorrências do padrão na linha
-                        System.out.println("Padrao \"" +pattern +"\" achado na linha " + lineNumber + ", posicao: " + i);
-                    }
+                      // imprime os índices das ocorrências do padrão na linha
+                    System.out.println("Padrao \"" +pattern +"\" achado na linha " + lineNumber + ", posicao(es): " + indices);
+                    
                     count++;
                 }
                 lineNumber++;
@@ -46,8 +50,23 @@ public class ShiftAnd {
             System.out.println("Encontrados " + count + " padroes \"" + pattern + "\".");
         } else{ // padrao nao encontrado
             System.out.println("Padrao nao encontrado.");
-        }     
+        }
+        System.out.println("Comparações: " + comp);     
     }
+
+        /**
+         * @param pattern String -- padrão a ser buscado
+         * @return int[] -- máscaras de bits
+         */
+        private static long[] mask(String pattern){
+        int patternLength = pattern.length();  // tamanho do padrão
+        long[] masks = new long[Character.MAX_VALUE];  // máscaras de bits    
+        for(int i = 0; i < patternLength; i++){
+            masks[pattern.charAt(i)] |= (1 << i);  // seta o bit i da máscara do caractere
+        }
+        return masks;
+    }
+
     /**
      * @param line String -- linha para ser buscada
      * @param pattern String -- padrão a ser buscado
@@ -56,19 +75,16 @@ public class ShiftAnd {
     public static List<Integer> search(String line, String pattern) {
         List<Integer> indices = new ArrayList<>();  // lista de índices das ocorrências do padrão na linha
         int patternLength = pattern.length();  // tamanho do padrão
-        int[] masks = new int[256];  // máscaras de bits
-        int state = 0;  // estado
+        long state = 0;  // estado
 
-        //Processando o padrão
-        for (int i = 0; i < patternLength; i++) {
-            masks[pattern.charAt(i)] |= (1 << i);  // seta o bit i da máscara do caractere
-        }
+        long[] masks = mask(pattern);  // máscaras de bits
 
         // Etapa de procura scaneia a linha e da udate do satedo baseado na mascara de bits
         for (int i = 0; i < line.length(); i++) {
             state = ((state << 1) | 1) & masks[line.charAt(i)]; // shift left 1 bit, add 1 para a direita, e mask
+            comp++; // incrementa o contador de comparações
             if ((state & (1 << (patternLength - 1))) != 0) {  // se o bit mais a esquerda for 1, o padrão foi encontrado
-                indices.add(i - patternLength + 1);
+                indices.add(i - patternLength + 2);
             }
         }
 
