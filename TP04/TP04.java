@@ -133,7 +133,7 @@ public class TP04 {
                         System.out.println("\n**************************** Boyer-Moore ***************************");
                         BoyerMoore.searchPattern(arquivo.getPathTxt(), padrao);
 
-                        System.out.println("Deseja excluir arquivo texto [S|N]? ");
+                        System.out.print("\nDeseja excluir arquivo texto [S|N]? ");
                         String excluir = br.readLine();
                         if( Character.toUpperCase(excluir.charAt(0)) == 'S' ){
                             // deleta arquivo txt
