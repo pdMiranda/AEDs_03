@@ -5,6 +5,7 @@ import TP04.Classes.CRUD;
 import TP04.Classes.Busca.KMP;
 import TP04.Classes.Busca.BoyerMoore;
 import TP04.Classes.Busca.ShiftAnd;
+import TP04.Classes.Busca.RabinKarp;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -133,6 +134,8 @@ public class TP04 {
                         ShiftAnd.searchPattern(arquivo.getPathTxt(), padrao);
                         System.out.println("\n**************************** Boyer-Moore ***************************");
                         BoyerMoore.searchPattern(arquivo.getPathTxt(), padrao);
+                        System.out.println("\n**************************** Rabin-Karp ***************************");
+                        RabinKarp.searchPattern(arquivo.getPathTxt(), padrao);
 
                         System.out.print("\nDeseja excluir arquivo texto [S|N]? ");
                         String excluir = br.readLine();
