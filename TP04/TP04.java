@@ -117,13 +117,14 @@ public class TP04 {
                     }
                     case 5: { // Casamento de padroes
                         System.out.println("\n**Casamento de padroes**");
+                        arquivo.toText();
 
                         // ler padrao (string)
                         System.out.print("Padrao a ser buscado: ");
                         String padrao = br.readLine();
 
                         // converte arquivo de bytes para texto
-                        arquivo.toText();
+                        
 
                         // executar tds os algoritmos e imprimir comparacoes/tempo
                         System.out.println("\n******************************** KMP ********************************");

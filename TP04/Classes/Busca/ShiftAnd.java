@@ -27,9 +27,10 @@ public class ShiftAnd {
             int lineNumber = 1;
 
             start = System.currentTimeMillis(); // marca inicio
+            long[] masks = mask(pattern);  // máscaras de bits
             
             while ((line = br.readLine()) != null) {  // le o arquivo linha por linha
-                List<Integer> indices = search(line, pattern);  // busca o padrão na linha
+                List<Integer> indices = search(line, pattern, masks);  // busca o padrão na linha
                 if (!indices.isEmpty()) {
                     // imprime os índices das ocorrências do padrão na linha
                     System.out.println("Padrao \"" +pattern +"\" achado na linha " + lineNumber + ", posicao(es): " + indices);
@@ -77,12 +78,10 @@ public class ShiftAnd {
      * @param pattern String -- padrão a ser buscado
      * @return lista de índices das ocorrências do padrão na linha
      */
-    private static List<Integer> search(String line, String pattern) {
+    private static List<Integer> search(String line, String pattern, long[] masks) {
         List<Integer> indices = new ArrayList<>();  // lista de índices das ocorrências do padrão na linha
         int patternLength = pattern.length();  // tamanho do padrão
         long state = 0;  // estado
-
-        long[] masks = mask(pattern);  // máscaras de bits
 
         // Etapa de procura scaneia a linha e da udate do satedo baseado na mascara de bits
         for (int i = 0; i < line.length(); i++) {

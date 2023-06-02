@@ -28,17 +28,18 @@ public class KMP {
             int aux = 0;
 
             start = System.currentTimeMillis(); // marca inicio
+            int[] prefix = prefix(pattern);  // tabela de prefixos
             
             while ((line = reader.readLine()) != null) { // para cada linha do arquivo
                 // busca o padrão na linha
                 List<Integer> indexes = new ArrayList<Integer>();  // lista de índices do padrão na linha
-                int index = search(line, pattern);  // índice do padrão na linha
+                int index = search(line, pattern, prefix);  // índice do padrão na linha
                 aux = index;
                 while (index >= 0) {  // enquanto o índice do padrão for maior ou igual a 0  
                     count++;  // incrementa o contador
                     indexes.add(aux + 1);  // adiciona o índice do padrão na lista de índices
                     line = line.substring(index + 1);  // linha a partir da posição index + 1
-                    index = search(line, pattern);  // índice do padrão na linha a partir da posição index + 1
+                    index = search(line, pattern, prefix);  // índice do padrão na linha a partir da posição index + 1
                     aux += index + 2;
                 }
 
@@ -95,11 +96,9 @@ public class KMP {
      * @param pattern String -- padrão a ser buscado
      * @return  índice da primeira ocorrência do padrão no texto, ou -1 se não for encontrado
      */ 
-    private static int search(String text, String pattern) {
+    private static int search(String text, String pattern, int[] prefix) {
         int n = text.length();
         int m = pattern.length();
-
-        int[] prefix = prefix(pattern);  // tabela de prefixos do padrão
 
         // procura pelo padrão no texto
         int i = 0;  // índice do texto
