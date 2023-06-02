@@ -34,8 +34,7 @@ public class ShiftAnd {
                 if (!indices.isEmpty()) {
                     // imprime os índices das ocorrências do padrão na linha
                     System.out.println("Padrao \"" +pattern +"\" achado na linha " + lineNumber + ", posicao(es): " + indices);
-                    
-                    count++;
+                    count+= indices.size();
                 }
                 lineNumber++;
             }

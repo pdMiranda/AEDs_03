@@ -40,7 +40,7 @@ public class KMP {
                     indexes.add(aux + 1);  // adiciona o índice do padrão na lista de índices
                     line = line.substring(index + 1);  // linha a partir da posição index + 1
                     index = search(line, pattern, prefix);  // índice do padrão na linha a partir da posição index + 1
-                    aux += index + 2;
+                    aux += index + 1;
                 }
 
                 if(indexes.size() > 0){
