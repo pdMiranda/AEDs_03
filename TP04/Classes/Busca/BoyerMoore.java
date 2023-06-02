@@ -15,14 +15,15 @@ public class BoyerMoore {
      * @param pattern String padrao a ser buscado
      */
     public static void searchPattern(String path, String pattern) {
-        int p = pattern.length(); // tamanho do padrao
-        
-        // cria vetores de deslocamento por caractere ruim e sufixo bom
-        int badChar[][] = createBadChar(pattern, p);
-        int goodSufix[] = createGoodSufix(pattern, p); 
-        
         int comp = 0, count = 0; // comparacoes e qtd de padroes encontrados
         long start = 0, end = 0; // tempo de inicio e fim
+        
+        start = System.currentTimeMillis(); // marca inicio
+        
+        int p = pattern.length(); // tamanho do padrao
+        // cria vetores de deslocamento por caractere ruim e sufixo bom
+        int badChar[][] = createBadChar(pattern, p);
+        int goodSuffix[] = createGoodSuffix(pattern, p); 
 
         try{
             // abre arquivo txt para leitura
@@ -31,8 +32,6 @@ public class BoyerMoore {
             // linha do texto buscado
             String line = ""; 
             int linhaAtual = 1;
-            
-            start = System.currentTimeMillis(); // marca inicio
             
             // faz casamento de padroes para cada linha do arquivo
             while( (line = br.readLine()) != null ){
@@ -54,15 +53,15 @@ public class BoyerMoore {
 
                     if(i < 0){ // achou padrao: foi p/esquerda na ultima comparacao (i=-1)
                         count++; // conta ocorrencia do padrao
-                        posicoes.add(shift); // salva posicao onde achou padrao na linha
+                        posicoes.add(shift+1); // salva posicao onde achou padrao na linha
 
                         // desloca 1 posicao para procurar proxima ocorrencia
                         shift += 1;
                     } else{ // encontrou letra diferente
                         comp++; // conta ultima comparacao realizada
 
-                        // calcula o deslocamento por caratere ruim do texto 
-                        shift += calcBadCharShift(i, badChar, (int)line.charAt(shift+i));   
+                        // calcula o deslocamento: por caractere ruim ou por sufixo bom (pega maior) 
+                        shift += Math.max( goodSuffix[i], calcBadCharShift(i, badChar, (int)line.charAt(shift+i)) );   
                     }
                 }
 
@@ -181,15 +180,69 @@ public class BoyerMoore {
         return badChar;
     }
     /**
-     * Preenche vetor de deslocamento por sufixo bom
+     * Preenche vetor de deslocamento por sufixo bom, verificando as tres perguntas para 
+     * saber quanto deslocar: se o sufixo eh precedido por uma letra diferente em outra 
+     * parte do padrao, se ele eh prefixo ou se parte eh prefixo.
      * @param pattern String padrao buscado
      * @param p int tamanho do padrao
-     * @return int[] goodSufix
+     * @return int[] goodSuffix
      */
-    private static int[] createGoodSufix(String pattern, int p) {
-        int goodSufix[] = new int[p];
+    private static int[] createGoodSuffix(String pattern, int p) {
+        int goodSuffix[] = new int[p]; // vetor com tamanho do padrao
 
+        goodSuffix[p-1] = 1; // ultima posicao eh sempre = 1
+        // percorre o padrao, verificando sufixos que comecam em [i]
+        for(int i = p-1; i > 0; i--){
+            // salva sufixo e a letra antes dele
+            String suffix = pattern.substring(i, p);
+            char letraAntes = pattern.charAt(i-1);
+            
+            int j = i-1,             // anda pra esquerda do sufixo
+                t = suffix.length(); // tamanho do sufixo
+            boolean found = false; // indica se achou algum dos casos
+            while(j > 0 && !found){  
+                // faz substring de msm tamanho do sufixo e pega letra antes dela
+                String sub = pattern.substring(j, j+t);
+                char letra = pattern.charAt(j-1);
 
-        return goodSufix;
+                // Caso 1: sufixo aparece precedido por outra letra no padrao
+                if(sub.equals(suffix) && letra != letraAntes){
+                    goodSuffix[i-1] = i-j; // quanto tem que deslocar p/"encaixar"
+                    found = true;
+                } else{ // nao entrou no caso 1 ainda: vai para esquerda
+                    j--;
+                }
+            }
+
+            if(!found){ // nao entra no caso 1
+                // salva prefixo da palavra (msm tamanho do sufixo)
+                String prefix = pattern.substring(0, t);
+                
+                // Caso 2: sufixo (todo) eh prefixo do padrao
+                if(suffix.equals(prefix)){ 
+                    goodSuffix[i-1] = i; // deslocamento necessario 
+                    found = true;
+                } else{ // nao entra no caso 2
+                    // diminui o tamanho do prefixo, tentando encontrar parte igual
+                    while(t > 1 && !found){
+                        t--;
+                        prefix = pattern.substring(0, t); // pega parte do prefixo
+
+                        // Caso 3: parte do sufixo eh prefixo
+                        if(suffix.contains(prefix)){ 
+                            // deslocamento: posicao no sufixo que contem o inicio 
+                            // do prefixo + posicao do sufixo no padrao
+                            goodSuffix[i-1] = i + suffix.indexOf(prefix.charAt(0));
+                            found = true;
+                        }
+                    }
+
+                    // nao entrou em nenhum caso: pula padrao todo
+                    if(!found) goodSuffix[i-1] = p;
+                }
+            }
+        }
+
+        return goodSuffix;
     }
 }
