@@ -12,7 +12,7 @@ public class Ceaser {
      * @param key  chave para criptografia
      * @return  string criptografada
      */
-    public static String encrypt(String original, int key) {
+    private static String encrypt(String original, int key) {
         StringBuilder ciphertext = new StringBuilder();
         for (char ch : original.toCharArray()) {
             if (Character.isLetter(ch)) {
@@ -31,7 +31,7 @@ public class Ceaser {
      * @param key  chave para descriptografia
      * @return  string descriptografada
      */
-    public static String decrypt(String ciphertext, int key) {
+    private static String decrypt(String ciphertext, int key) {
         StringBuilder original = new StringBuilder();  //string descriptografada
         for (char ch : ciphertext.toCharArray()) {  //para cada caractere da string criptografada
             if (Character.isLetter(ch)) {
@@ -44,11 +44,11 @@ public class Ceaser {
         return original.toString();  //retorna string descriptografada
     }
 
-    public static void encryptAll(Musica obj) {
+    public static void encrypt(Musica obj) {
         obj.setTrack_id(encrypt(obj.getTrack_id(), key));
     }
 
-    public static void decryptAll(Musica obj) {
+    public static void decrypt(Musica obj) {
         obj.setTrack_id(decrypt(obj.getTrack_id(), key));
     }
 

@@ -12,7 +12,7 @@ public class Vigenere {
      * @param key     chave para criptografia
      * @return  string criptografada
      */
-    public static String encrypt(String original, String key) {
+    private static String encrypt(String original, String key) {
         StringBuilder ciphertext = new StringBuilder();  //string criptografada
         int keyIndex = 0;  //indice da chave
         for (char c : original.toCharArray()) {  //para cada caractere da string original
@@ -34,7 +34,7 @@ public class Vigenere {
      * @param key   chave para descriptografia
      * @return  string descriptografada
      */
-    public static String decrypt(String ciphertext, String key ) {
+    private static String decrypt(String ciphertext, String key ) {
         StringBuilder original = new StringBuilder();  //string descriptografada
         int keyIndex = 0;  //indice da chave
         for (char c : ciphertext.toCharArray()) {  //para cada caractere da string criptografada
@@ -54,14 +54,14 @@ public class Vigenere {
     /**
      * @param obj  objeto a ser criptografado
      */
-    public static void encryptAll(Musica obj){
+    public static void encrypt(Musica obj){
         obj.setTrack_id(encrypt(obj.getTrack_id(), key));
     }
 
     /**
      * @param obj  objeto a ser descriptografado
      */
-    public static void decryptAll(Musica obj){
+    public static void decrypt(Musica obj){
         obj.setTrack_id(decrypt(obj.getTrack_id(), key));
     }
 
