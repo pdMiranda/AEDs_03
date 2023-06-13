@@ -1,5 +1,8 @@
 /** Pacotes **/
 package TP05.Classes;
+import TP05.Classes.Criptografia.Ceaser;
+import TP05.Classes.Criptografia.Vigenere;
+import TP05.Classes.Criptografia.Colunas;
 import java.io.RandomAccessFile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -395,6 +398,11 @@ public class CRUD {
             ultimoID++;
             obj.setID(ultimoID);
 
+            // criptografa campo track_id da Musica com diferentes algoritmos
+            Ceaser.encrypt(obj);
+            Vigenere.encrypt(obj);
+            Colunas.encrypt(obj);
+
             // cria registro como array de bytes do objeto
             objectData = obj.toByteArray();
             pos = arq.length();
@@ -449,6 +457,11 @@ public class CRUD {
                         arq.read(data);
                         obj = new Musica();
                         obj.fromByteArray(data);
+
+                        // descriptografa campo track_id da Musica com diferentes algoritmos
+                        Ceaser.decrypt(obj);
+                        Vigenere.decrypt(obj);
+                        Colunas.decrypt(obj);
                     } else{
                         System.err.println("Registro pesquisado ja foi excluido");
                     }
