@@ -386,7 +386,7 @@ public class CRUD {
      */
     public void create(Musica obj) {
         Ceaser.create(obj);
-        //Colunas.create(obj);
+        Colunas.create(obj);
     }
     /**
      * Percorre o arquivo procurando pelo ID da musica que se quer ler, quando encontra
