@@ -71,9 +71,7 @@ public class TP05 {
 
                         int readID = Integer.parseInt(br.readLine());
                         Musica msc = arquivo.read(readID);
-                        if (msc != null)
-                            System.out.println("\n" + msc);
-                        else
+                        if(msc == null) 
                             System.out.println("Musica buscada nao encontrada.");
 
                         break;
@@ -84,16 +82,15 @@ public class TP05 {
 
                         int updateID = Integer.parseInt(br.readLine());
                         Musica msc = arquivo.read(updateID);
-                        if (msc != null) {
-                            System.out.println("\n" + msc);
+                        if(msc == null){ 
+                            System.out.println("Musica a ser atualizada nao encontrada");
+                        } else{
                             Musica nova = lerAtualizacao(msc);
-
-                            if (arquivo.update(nova))
+                            
+                            if(arquivo.update(nova))
                                 System.out.println("Musica atualizada com sucesso");
                             else
                                 System.out.println("Erro ao atualizar musica");
-                        } else {
-                            System.out.println("Musica a ser atualizada nao encontrada");
                         }
 
                         break;
@@ -111,19 +108,8 @@ public class TP05 {
 
                         break;
                     }
-                    case 5: { // Deleta arquivo
-                        System.out.println("\n**Deletando arquivo de registros**");
-
-                        if(arquivo.exists() && arquivo.deleteFile())
-                            System.out.println("Arquivo de dados deletado com sucesso.");
-                        else
-                            System.out.println("Erro ao deletar arquivo de dados.");
-
-                        break;
-                    }
-                    case 6: { // Fecha arquivo e encerra programa
+                    case 6: { // Encerra programa
                         System.out.println("\n**Encerrando programa**");
-                        if(arquivo.exists()) arquivo.close();
                         break;
                     }
                 }
@@ -152,8 +138,7 @@ public class TP05 {
         System.out.println("2 - Read");
         System.out.println("3 - Update");
         System.out.println("4 - Delete");
-        System.out.println("5 - Deletar arquivo");
-        System.out.println("6 - Fechar programa");
+        System.out.println("5 - Fechar programa");
 
         int opc = -1;
         boolean invalido = false;
@@ -162,7 +147,7 @@ public class TP05 {
             do {
                 System.out.print("-> ");
                 opc = Integer.parseInt(br.readLine());
-                invalido = (opc < 0) || (opc > 6);
+                invalido = (opc < 0) || (opc > 5);
                 if (invalido)
                     System.out.println("Opcao invalida! Digite novamente");
             } while (invalido);

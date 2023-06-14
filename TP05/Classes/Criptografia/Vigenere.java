@@ -1,5 +1,6 @@
 package TP05.Classes.Criptografia;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -72,19 +73,17 @@ public class Vigenere {
     }
 
     /**
-     * Cria uma musica
-     * 
-     * @param obj Musica a ser criptografada
-     * @throws IOException se houver erro de leitura/escrita
+     * Cria um registro de Musica no arquivo
+     * @param obj  objeto a ser criado no arquivo
      */
-    public void create(Musica obj) throws IOException {
+    public static void create(Musica obj) {
         int ultimoID = -1;
         byte[] objectData;
         long pos;
 
-        RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
-
+        
         try {
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
             arq.seek(0); // início do arquivo
 
             // lê ID do último registro em arquivo (0 se estiver vazio)
@@ -92,9 +91,8 @@ public class Vigenere {
             ultimoID++;
             obj.setID(ultimoID);
 
-            // criptografa campo track_id da Musica com diferentes algoritmos
-
-            Vigenere.encrypt(obj);
+            // criptografa campo track_id da Musica
+            encrypt(obj);
 
             // cria registro como array de bytes do objeto
             objectData = obj.toByteArray();
@@ -107,25 +105,26 @@ public class Vigenere {
 
             arq.seek(0); // início do arquivo
             arq.writeInt(ultimoID);
+            arq.close();
+        } catch(FileNotFoundException fnfe){
+            System.err.println("Arquivo .db de vigenere nao encontrado");
+            fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao criar registro no arquivo");
             ioe.printStackTrace();
         }
-        arq.close();
     }
 
     /**
-     * Atualiza uma Musica
-     * 
-     * @param ID ID da Musica a ser lida
-     * @return Musica lida
-     * @throws IOException se houver erro de leitura/escrita
+     * Lê um registro de Musica do arquivo
+     * @param ID  ID do registro a ser lido
+     * @return  objeto Musica lido do arquivo
      */
-    public Musica read(int ID) throws IOException {
+    public static Musica read(int ID) {
         Musica obj = null;
-        RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
-
+        
         try {
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
             boolean found = false;
             long pos, arqLen = arq.length();
             byte lapide;
@@ -155,9 +154,8 @@ public class Vigenere {
                         obj = new Musica();
                         obj.fromByteArray(data);
 
-                        // descriptografa campo track_id da Musica com diferentes algoritmos
-
-                        Vigenere.decrypt(obj);
+                        // descriptografa campo track_id da Musica
+                        decrypt(obj);
 
                     } else {
                         System.err.println("Registro pesquisado ja foi excluido");
@@ -168,27 +166,31 @@ public class Vigenere {
 
                 pos = arq.getFilePointer(); // início do próximo registro (lápide)
             }
+            arq.close();
+        } catch(FileNotFoundException fnfe){
+            System.err.println("Arquivo .db de vigenere nao encontrado");
+            fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao ler registro no arquivo");
             ioe.printStackTrace();
         }
-        arq.close();
+        
         return obj;
     }
 
     /**
-     * Atualiza uma Musica
-     * 
-     * @param objNovo Musica a ser atualizada
-     * @return true se atualizado, false se não encontrado
-     * @throws IOException se houver erro de leitura/escrita
+     * Atualiza um registro de Musica no arquivo
+     * @param objNovo  objeto Musica a ser atualizado no arquivo
+     * @return  true se atualizado com sucesso, false se não encontrado
      */
-    public boolean update(Musica objNovo) throws IOException {
+    public static boolean update(Musica objNovo) {
         boolean found = false;
-        RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
+        
+        // criptografa objeto novo
         encrypt(objNovo);
-
+        
         try {
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
             long pos, arqLen = arq.length();
             byte lapide;
             byte[] objectData;
@@ -213,7 +215,6 @@ public class Vigenere {
                         arq.seek(pos + 1 + Integer.BYTES);
 
                         // cria registro como array de bytes do objeto novo
-
                         objectData = objNovo.toByteArray();
                         regSizeNovo = objectData.length;
 
@@ -235,26 +236,28 @@ public class Vigenere {
 
                 pos = arq.getFilePointer(); // início do próximo registro (lápide)
             }
+            arq.close();
+        } catch(FileNotFoundException fnfe){
+            System.err.println("Arquivo .db de vigenere nao encontrado");
+            fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao atualizar registro no arquivo");
             ioe.printStackTrace();
         }
-        arq.close();
+        
         return found;
     }
 
     /**
-     * Exclui uma Musica
-     * 
-     * @param ID ID da Musica a ser excluída
-     * @return true se excluído, false se não encontrado
-     * @throws IOException se houver erro de leitura/escrita
+     * Exclui um registro de Musica do arquivo
+     * @param ID ID do registro a ser excluído
+     * @return  true se excluído com sucesso, false se não encontrado
      */
-    public boolean delete(int ID) throws IOException {
-        RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
+    public static boolean delete(int ID) {
         boolean found = false;
-
+        
         try {
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
             long pos, arqLen = arq.length();
             byte lapide;
             int regSize, regID;
@@ -285,12 +288,15 @@ public class Vigenere {
 
                 pos = arq.getFilePointer(); // início do próximo registro (lápide)
             }
+            arq.close();
+        } catch(FileNotFoundException fnfe){
+            System.err.println("Arquivo .db de vigenere nao encontrado");
+            fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao deletar registro no arquivo");
             ioe.printStackTrace();
         }
-        arq.close();
+
         return found;
     }
-
 }

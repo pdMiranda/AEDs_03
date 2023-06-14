@@ -1,5 +1,6 @@
 package TP05.Classes.Criptografia;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -59,16 +60,15 @@ public class Ceaser {
     /**
      * Cria um registro de Musica no arquivo
      * @param obj  objeto a ser criado no arquivo
-     * @throws IOException  se houver erro de leitura/escrita no arquivo
      */
-    public void create(Musica obj) throws IOException {
+    public static void create(Musica obj) {
         int ultimoID = -1;
         byte[] objectData;
         long pos;
 
-        RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
-
+        
         try {
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
             arq.seek(0); // início do arquivo
 
             // lê ID do último registro em arquivo (0 se estiver vazio)
@@ -76,9 +76,8 @@ public class Ceaser {
             ultimoID++;
             obj.setID(ultimoID);
 
-            // criptografa campo track_id da Musica com diferentes algoritmos
-
-            Ceaser.encrypt(obj);
+            // criptografa campo track_id da Musica
+            encrypt(obj);
 
             // cria registro como array de bytes do objeto
             objectData = obj.toByteArray();
@@ -91,24 +90,26 @@ public class Ceaser {
 
             arq.seek(0); // início do arquivo
             arq.writeInt(ultimoID);
+            arq.close();
+        } catch(FileNotFoundException fnfe){
+            System.err.println("Arquivo .db de ceaser nao encontrado");
+            fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao criar registro no arquivo");
             ioe.printStackTrace();
         }
-        arq.close();
     }
 
     /**
      * Lê um registro de Musica do arquivo
      * @param ID  ID do registro a ser lido
      * @return  objeto Musica lido do arquivo
-     * @throws IOException  se houver erro de leitura/escrita no arquivo
      */
-    public Musica read(int ID) throws IOException {
+    public static Musica read(int ID) {
         Musica obj = null;
-        RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
-
+        
         try {
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
             boolean found = false;
             long pos, arqLen = arq.length();
             byte lapide;
@@ -138,9 +139,8 @@ public class Ceaser {
                         obj = new Musica();
                         obj.fromByteArray(data);
 
-                        // descriptografa campo track_id da Musica com diferentes algoritmos
-
-                        Ceaser.decrypt(obj);
+                        // descriptografa campo track_id da Musica
+                        decrypt(obj);
 
                     } else {
                         System.err.println("Registro pesquisado ja foi excluido");
@@ -151,11 +151,15 @@ public class Ceaser {
 
                 pos = arq.getFilePointer(); // início do próximo registro (lápide)
             }
+            arq.close();
+        } catch(FileNotFoundException fnfe){
+            System.err.println("Arquivo .db de ceaser nao encontrado");
+            fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao ler registro no arquivo");
             ioe.printStackTrace();
         }
-        arq.close();
+        
         return obj;
     }
 
@@ -163,14 +167,15 @@ public class Ceaser {
      * Atualiza um registro de Musica no arquivo
      * @param objNovo  objeto Musica a ser atualizado no arquivo
      * @return  true se atualizado com sucesso, false se não encontrado
-     * @throws IOException  se houver erro de leitura/escrita no arquivo
      */
-    public boolean update(Musica objNovo) throws IOException {
+    public static boolean update(Musica objNovo) {
         boolean found = false;
-        RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
-        Ceaser.encrypt(objNovo);
-
+        
+        // criptografa objeto novo
+        encrypt(objNovo);
+        
         try {
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
             long pos, arqLen = arq.length();
             byte lapide;
             byte[] objectData;
@@ -195,7 +200,6 @@ public class Ceaser {
                         arq.seek(pos + 1 + Integer.BYTES);
 
                         // cria registro como array de bytes do objeto novo
-
                         objectData = objNovo.toByteArray();
                         regSizeNovo = objectData.length;
 
@@ -217,11 +221,15 @@ public class Ceaser {
 
                 pos = arq.getFilePointer(); // início do próximo registro (lápide)
             }
+            arq.close();
+        } catch(FileNotFoundException fnfe){
+            System.err.println("Arquivo .db de ceaser nao encontrado");
+            fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao atualizar registro no arquivo");
             ioe.printStackTrace();
         }
-        arq.close();
+        
         return found;
     }
 
@@ -229,13 +237,12 @@ public class Ceaser {
      * Exclui um registro de Musica do arquivo
      * @param ID ID do registro a ser excluído
      * @return  true se excluído com sucesso, false se não encontrado
-     * @throws IOException  se houver erro de leitura/escrita no arquivo
      */
-    public boolean delete(int ID) throws IOException {
-        RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
+    public static boolean delete(int ID) {
         boolean found = false;
-
+        
         try {
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
             long pos, arqLen = arq.length();
             byte lapide;
             int regSize, regID;
@@ -266,11 +273,15 @@ public class Ceaser {
 
                 pos = arq.getFilePointer(); // início do próximo registro (lápide)
             }
+            arq.close();
+        } catch(FileNotFoundException fnfe){
+            System.err.println("Arquivo .db de ceaser nao encontrado");
+            fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao deletar registro no arquivo");
             ioe.printStackTrace();
         }
-        arq.close();
+        
         return found;
     }
 
