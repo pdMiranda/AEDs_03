@@ -108,12 +108,12 @@ public class TP05 {
 
                         break;
                     }
-                    case 6: { // Encerra programa
+                    case 5: { // Encerra programa
                         System.out.println("\n**Encerrando programa**");
                         break;
                     }
                 }
-            } while (opc != 6);
+            } while (opc != 5);
 
             fr.close();
             br.close();

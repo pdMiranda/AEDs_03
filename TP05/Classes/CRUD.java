@@ -397,11 +397,11 @@ public class CRUD {
     public Musica read(int ID) {
         Musica obj = null;
         
-        System.out.println("Descriptografando track_id da musica com Cifra de Cesar...");
+        System.out.println("\nDescriptografando track_id da musica com Cifra de Cesar...");
         obj = Ceaser.read(ID);
         if(obj != null) System.out.println(obj + "\n");
 
-        System.out.println("Descriptografando track_id da musica com Cifra de Colunas...");
+        System.out.println("\nDescriptografando track_id da musica com Cifra de Colunas...");
         obj = Colunas.read(ID);
         if(obj != null) System.out.println(obj + "\n");
 
