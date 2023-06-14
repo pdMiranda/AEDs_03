@@ -8,7 +8,7 @@ import TP05.Classes.Musica;
 
 public class Ceaser {
 
-    private static final int key = 42;
+    private static final int key = 7;
 
     /**
      * Criptografa uma string usando a cifra de Ceaser
@@ -16,17 +16,13 @@ public class Ceaser {
      * @param key  chave para criptografia
      * @return  string criptografada
      */
-    private static String encrypt(String original, int key) {
-        StringBuilder ciphertext = new StringBuilder();
-        for (char ch : original.toCharArray()) {
-            if (Character.isLetter(ch)) {
-                char shifted = (char) (((ch - 'a' + key) % 26) + 'a');
-                ciphertext.append(shifted);
-            } else {
-                ciphertext.append(ch);
-            }
+    private static String encrypt(String message, int key) {
+        StringBuilder result = new StringBuilder();
+        for (char ch : message.toCharArray()) {
+            char shifted = (char) (((ch + key - 32) % 95) + 32);
+            result.append(shifted);
         }
-        return ciphertext.toString();
+        return result.toString();
     }
 
     /**
@@ -35,17 +31,13 @@ public class Ceaser {
      * @param key  chave para descriptografia
      * @return  string descriptografada
      */
-    private static String decrypt(String ciphertext, int key) {
-        StringBuilder original = new StringBuilder();  //string descriptografada
-        for (char ch : ciphertext.toCharArray()) {  //para cada caractere da string criptografada
-            if (Character.isLetter(ch)) {
-                char shifted = (char) (((ch - 'a' - key + 26) % 26) + 'a');  //caractere deslocado
-                original.append(shifted);
-            } else {
-                original.append(ch);  //adiciona caractere a string descriptografada
-            }
+    private static String decrypt(String message, int key) {
+        StringBuilder result = new StringBuilder();
+        for (char ch : message.toCharArray()) {
+            char shifted = (char) (((ch - key - 32) % 95) + 32);
+            result.append(shifted);
         }
-        return original.toString();  //retorna string descriptografada
+        return result.toString();
     }
 
     public static void encrypt(Musica obj) {
@@ -69,6 +61,7 @@ public class Ceaser {
         
         try {
             RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
+            if(arq.length() == 0 ) arq.seek(0); arq.writeInt(0);
             arq.seek(0); // início do arquivo
 
             // lê ID do último registro em arquivo (0 se estiver vazio)

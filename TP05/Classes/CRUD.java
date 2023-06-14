@@ -1,7 +1,6 @@
 /** Pacotes **/
 package TP05.Classes;
 import TP05.Classes.Criptografia.Ceaser;
-import TP05.Classes.Criptografia.Vigenere;
 import TP05.Classes.Criptografia.Colunas;
 import java.io.RandomAccessFile;
 import java.io.FileNotFoundException;
@@ -387,8 +386,7 @@ public class CRUD {
      */
     public void create(Musica obj) {
         Ceaser.create(obj);
-        Vigenere.create(obj);
-        Colunas.create(obj);
+        //Colunas.create(obj);
     }
     /**
      * Percorre o arquivo procurando pelo ID da musica que se quer ler, quando encontra
@@ -401,15 +399,11 @@ public class CRUD {
         
         System.out.println("Descriptografando track_id da musica com Cifra de Cesar...");
         obj = Ceaser.read(ID);
-        if(obj != null) System.out.println("\n" + obj);
-
-        System.out.println("Descriptografando track_id da musica com Cifra de Vigenere...");
-        obj = Vigenere.read(ID);
-        if(obj != null) System.out.println("\n" + obj);
+        if(obj != null) System.out.println(obj + "\n");
 
         System.out.println("Descriptografando track_id da musica com Cifra de Colunas...");
         obj = Colunas.read(ID);
-        if(obj != null) System.out.println("\n" + obj);
+        if(obj != null) System.out.println(obj + "\n");
 
         return obj;
     }
@@ -422,7 +416,7 @@ public class CRUD {
     public boolean update(Musica objNovo) {
         boolean found = false;
 
-        if(Ceaser.update(objNovo) && Vigenere.update(objNovo) && Colunas.update(objNovo))
+        if(Ceaser.update(objNovo) && Colunas.update(objNovo))
             found = true;
 
         return found;
@@ -435,7 +429,7 @@ public class CRUD {
     public boolean delete(int ID) {
         boolean found = false;
         
-        if(Ceaser.delete(ID) && Vigenere.delete(ID) && Colunas.delete(ID))
+        if(Ceaser.delete(ID) && Colunas.delete(ID))
             found = true;
 
         return found;
