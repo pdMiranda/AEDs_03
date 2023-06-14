@@ -399,17 +399,17 @@ public class CRUD {
     public Musica read(int ID) {
         Musica obj = null;
         
-        System.out.println("Descriptografando track_id da musica com Cifra de Cesar...");
+        System.out.println("\nDescriptografando track_id da musica com Cifra de Cesar...");
         obj = Ceaser.read(ID);
-        if(obj != null) System.out.println("\n" + obj);
+        if(obj != null) System.out.println(obj);
 
-        System.out.println("Descriptografando track_id da musica com Cifra de Vigenere...");
+        System.out.println("\nDescriptografando track_id da musica com Cifra de Vigenere...");
         obj = Vigenere.read(ID);
-        if(obj != null) System.out.println("\n" + obj);
+        if(obj != null) System.out.println(obj);
 
-        System.out.println("Descriptografando track_id da musica com Cifra de Colunas...");
+        System.out.println("\nDescriptografando track_id da musica com Cifra de Colunas...");
         obj = Colunas.read(ID);
-        if(obj != null) System.out.println("\n" + obj);
+        if(obj != null) System.out.println(obj);
 
         return obj;
     }

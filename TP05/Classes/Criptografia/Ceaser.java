@@ -69,6 +69,12 @@ public class Ceaser {
         
         try {
             RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
+          
+            if(arq.length() == 0){
+                arq.seek(0);
+                arq.writeInt(0); // ultimoID inicial
+            }
+            
             arq.seek(0); // início do arquivo
 
             // lê ID do último registro em arquivo (0 se estiver vazio)
