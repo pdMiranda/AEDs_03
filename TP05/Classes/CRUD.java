@@ -2,6 +2,8 @@
 package TP05.Classes;
 import TP05.Classes.Criptografia.Ceaser;
 import TP05.Classes.Criptografia.Colunas;
+import TP05.Classes.Criptografia.Vigenere;
+
 import java.io.RandomAccessFile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -385,8 +387,12 @@ public class CRUD {
      * @param obj Musica a ser registrada no arquivo 
      */
     public void create(Musica obj) {
-        Ceaser.create(obj);
-        Colunas.create(obj);
+        Musica objColunas = obj.clone();
+        Musica objCeaser = obj.clone();
+        Musica objVigenere = obj.clone();
+        Colunas.create(objColunas);
+        Ceaser.create(objCeaser);
+        Vigenere.create(objVigenere);
     }
     /**
      * Percorre o arquivo procurando pelo ID da musica que se quer ler, quando encontra
@@ -399,11 +405,16 @@ public class CRUD {
         
         System.out.println("\nDescriptografando track_id da musica com Cifra de Cesar...");
         obj = Ceaser.read(ID);
-        if(obj != null) System.out.println(obj + "\n");
+        if(obj != null) System.out.println("Musica Descriptografada: \"" + obj + "\"\n");
+
+        System.out.println("\nDescriptografando track_id da musica com Cifra de Vigenere...");
+        obj = Vigenere.read(ID);
+        if(obj != null) System.out.println("Musica Descriptografada: \"" + obj + "\"\n");
+        
 
         System.out.println("\nDescriptografando track_id da musica com Cifra de Colunas...");
         obj = Colunas.read(ID);
-        if(obj != null) System.out.println(obj + "\n");
+        if(obj != null) System.out.println("Musica Descriptografada: \"" + obj + "\"\n");
 
         return obj;
     }
@@ -416,7 +427,11 @@ public class CRUD {
     public boolean update(Musica objNovo) {
         boolean found = false;
 
-        if(Ceaser.update(objNovo) && Colunas.update(objNovo))
+        Musica objColunas = objNovo.clone();
+        Musica objCeaser = objNovo.clone();
+        Musica objVigenere = objNovo.clone();
+
+        if(Ceaser.update(objCeaser) && Colunas.update(objColunas) && Vigenere.update(objVigenere))
             found = true;
 
         return found;
@@ -429,7 +444,7 @@ public class CRUD {
     public boolean delete(int ID) {
         boolean found = false;
         
-        if(Ceaser.delete(ID) && Colunas.delete(ID))
+        if(Ceaser.delete(ID) && Colunas.delete(ID) && Vigenere.delete(ID))
             found = true;
 
         return found;

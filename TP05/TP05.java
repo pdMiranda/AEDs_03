@@ -61,7 +61,6 @@ public class TP05 {
                         Musica msc = lerMusica();
                         arquivo.create(msc);
 
-                        System.out.println("\n" + msc);
 
                         break;
                     }

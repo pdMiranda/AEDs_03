@@ -6,48 +6,62 @@ import java.io.RandomAccessFile;
 
 import TP05.Classes.Musica;
 
-public class Ceaser {
+public class Vigenere {
 
-    private static final int key = 7;
+    private static final String key = "AEDsIII"; // chave para criptografia/descritografia
 
     /**
-     * Criptografa uma string usando a cifra de Ceaser
-     * @param original  string a ser criptografada
-     * @param key  chave para criptografia
-     * @return  string criptografada
+     * Criptografa uma string usando a cifra de Vigenere
+     * 
+     * @param original string a ser criptografada
+     * @param key      chave para criptografia
+     * @return string criptografada
      */
-    private static String encrypt(String message, int key) {
-        StringBuilder result = new StringBuilder();
-        for (char ch : message.toCharArray()) {
-            char shifted = (char) (((ch + key - 32) % 95) + 32);
-            result.append(shifted);
+    private static String encrypt(String original, String key) {
+        StringBuilder ciphertext = new StringBuilder();
+        int keyIndex = 0;
+        for (char c : original.toCharArray()) {
+            int shift = key.charAt(keyIndex) % 256;
+            char shifted = (char) ((c + shift) % 256);
+            ciphertext.append(shifted);
+            keyIndex = (keyIndex + 1) % key.length();
         }
-        return result.toString();
+        return ciphertext.toString();
     }
 
     /**
-     * Descriptografa uma string usando a cifra de Ceaser
-     * @param ciphertext  string a ser descriptografada
-     * @param key  chave para descriptografia
-     * @return  string descriptografada
+     * Descriptografa uma string usando a cifra de Vigenere
+     * 
+     * @param ciphertext string a ser descriptografada
+     * @param key        chave para descriptografia
+     * @return string descriptografada
      */
-    private static String decrypt(String message, int key) {
-        StringBuilder result = new StringBuilder();
-        for (char ch : message.toCharArray()) {
-            char shifted = (char) (((ch - key - 32) % 95) + 32);
-            result.append(shifted);
+    private static String decrypt(String ciphertext) {
+        StringBuilder plaintext = new StringBuilder();
+        int keyIndex = 0;
+        for (char c : ciphertext.toCharArray()) {
+            int shift = key.charAt(keyIndex) % 256;
+            char shifted = (char) ((c - shift + 256) % 256);
+            plaintext.append(shifted);
+            keyIndex = (keyIndex + 1) % key.length();
         }
-        return result.toString();
+        return plaintext.toString();
     }
 
+    /**
+     * @param obj objeto a ser criptografado
+     */
     public static void encrypt(Musica obj) {
+        
         obj.setTrack_id(encrypt(obj.getTrack_id(), key));
     }
 
+    /**
+     * @param obj objeto a ser descriptografado
+     */
     public static void decrypt(Musica obj) {
-        obj.setTrack_id(decrypt(obj.getTrack_id(), key));
+        obj.setTrack_id(decrypt(obj.getTrack_id()));
     }
-
 
     /**
      * Cria um registro de Musica no arquivo
@@ -60,11 +74,8 @@ public class Ceaser {
 
         
         try {
-            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
-            if(arq.length() == 0 ) {
-                arq.seek(0);
-                arq.writeInt(0);
-            }
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
+            if(arq.length() == 0) {arq.seek(0); arq.writeInt(0);} // cabeçalho
             arq.seek(0); // início do arquivo
 
             // lê ID do último registro em arquivo (0 se estiver vazio)
@@ -88,7 +99,7 @@ public class Ceaser {
             arq.writeInt(ultimoID);
             arq.close();
         } catch(FileNotFoundException fnfe){
-            System.err.println("Arquivo .db de ceaser nao encontrado");
+            System.err.println("Arquivo .db de vigenere nao encontrado");
             fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao criar registro no arquivo");
@@ -105,7 +116,7 @@ public class Ceaser {
         Musica obj = null;
         
         try {
-            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
             boolean found = false;
             long pos, arqLen = arq.length();
             byte lapide;
@@ -133,6 +144,7 @@ public class Ceaser {
                         byte[] data = new byte[regSize];
                         arq.read(data);
                         obj = new Musica();
+                        
                         obj.fromByteArray(data);
                         
                         // descriptografa campo track_id da Musica
@@ -150,7 +162,7 @@ public class Ceaser {
             }
             arq.close();
         } catch(FileNotFoundException fnfe){
-            System.err.println("Arquivo .db de ceaser nao encontrado");
+            System.err.println("Arquivo .db de vigenere nao encontrado");
             fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao ler registro no arquivo");
@@ -172,7 +184,7 @@ public class Ceaser {
         encrypt(objNovo);
         
         try {
-            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
             long pos, arqLen = arq.length();
             byte lapide;
             byte[] objectData;
@@ -220,7 +232,7 @@ public class Ceaser {
             }
             arq.close();
         } catch(FileNotFoundException fnfe){
-            System.err.println("Arquivo .db de ceaser nao encontrado");
+            System.err.println("Arquivo .db de vigenere nao encontrado");
             fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao atualizar registro no arquivo");
@@ -239,7 +251,7 @@ public class Ceaser {
         boolean found = false;
         
         try {
-            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoCeaser.db", "rw");
+            RandomAccessFile arq = new RandomAccessFile("TP05/Data/arquivoVigenere.db", "rw");
             long pos, arqLen = arq.length();
             byte lapide;
             int regSize, regID;
@@ -272,14 +284,13 @@ public class Ceaser {
             }
             arq.close();
         } catch(FileNotFoundException fnfe){
-            System.err.println("Arquivo .db de ceaser nao encontrado");
+            System.err.println("Arquivo .db de vigenere nao encontrado");
             fnfe.printStackTrace();
         } catch (IOException ioe) {
             System.err.println("Erro de leitura/escrita ao deletar registro no arquivo");
             ioe.printStackTrace();
         }
-        
+
         return found;
     }
-
 }

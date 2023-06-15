@@ -216,6 +216,7 @@ public class Colunas {
                         obj = new Musica();
                         obj.fromByteArray(data);
 
+                        System.out.println("Musica Criptografada: \"" + obj + "\"");
                         decrypt(obj);
                     } else{
                         System.err.println("Registro pesquisado ja foi excluido");
